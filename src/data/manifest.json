@@ -1,0 +1,17 @@
+{
+  "source": "https://github.com/5e-bits/5e-srd-api",
+  "commit": "3b6da29a45b3b328c2409cf97a14e2507e291bf8",
+  "rules": "2014 / SRD 5.1",
+  "license": "CC-BY-4.0",
+  "sha256": {
+    "Backgrounds.json": "f98c556f1b842c2570058cd071b7c20743290358559a1f46140dbedf36f418aa",
+    "Classes.json": "2c2795733d45db10758f1c62cad28ffdb1e44159d49a0669bd2dcd606ab6fcfc",
+    "Conditions.json": "e2c8d211a4f72722c3490217aea948e78c5235c2d51d3c08a4fd3e9d3cd4468f",
+    "Equipment.json": "6dc4dc61ac71c9ae2ffffe8deae087f2dbe8f1a7b5a8675077adb5df649901c3",
+    "Levels.json": "7a55020ff5137c33586c77b3423ec6b420227bd51a07479dea83b256cb45f72a",
+    "Magic-Items.json": "9a6f928cbf36b268b02e09dc116995efce8a74380df0450e197117886b64993d",
+    "Races.json": "75e6e99c318162e229f825d79f1be0c06abe38f37d14eeea54ce32d94d051245",
+    "Skills.json": "09f42a2d3e3d952fc2654387bf1a56dee7f02a326a68a8bc167bd562b0f1e0d9",
+    "Spells.json": "abebe7d860ec32985b804e087ecd3986145b1b772fa0c2e43cce9964b382f2ae"
+  }
+}
