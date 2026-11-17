@@ -409,12 +409,20 @@ function Wizard({
   );
 }
 
-export default function App() {
+export default function App({
+  initialView = "sheet",
+  initialQuery = "",
+  onNavigate,
+}: {
+  initialView?: string;
+  initialQuery?: string;
+  onNavigate?: (view: string) => void;
+}) {
   const [initial] = useState(R.loadState);
   const [state, setState] = useState(initial.state),
     [blocked, setBlocked] = useState(Boolean(initial.warning)),
     [saveError, setSaveError] = useState(initial.warning),
-    [view, setView] = useState("sheet"),
+    [view, setView] = useState(initialView),
     [tab, setTab] = useState("overview");
   const [wizard, setWizard] = useState(false),
     [detail, setDetail] = useState<Entry | null>(null),
@@ -425,7 +433,7 @@ export default function App() {
   const [amount, setAmount] = useState(1),
     [restDice, setRestDice] = useState(1),
     [restHealing, setRestHealing] = useState(1),
-    [query, setQuery] = useState(""),
+    [query, setQuery] = useState(initialQuery),
     [levelFilter, setLevelFilter] = useState("all"),
     [classFilter, setClassFilter] = useState("all"),
     [category, setCategory] = useState("all"),
@@ -558,6 +566,10 @@ export default function App() {
     [view, query, levelFilter, classFilter, category, schoolFilter],
   );
   const navigate = (v: string) => {
+    if (onNavigate) {
+      onNavigate(v);
+      return;
+    }
     setView(v);
     setQuery("");
   };

@@ -12,3 +12,17 @@ This work includes material taken from the System Reference Document 5.1 (“SRD
 - Application transformations: selection of display fields, Chinese UI and selected unofficial name translations, local character tracking and derived-stat calculations. English mechanics text is not translated or invented. Homebrew entries are clearly marked and stored per character.
 - Upstream software is MIT licensed; copyright and license text preserved in `THIRD-PARTY-MIT.txt`.
 - This independent tool is 5E compatible; it is not an official product.
+
+## Chinese codex and setting orientation (v2)
+
+Chinese beginner explanations, class / race summaries and examples are authored for this project, adapting SRD 5.1 mechanics where applicable. These are non-official educational summaries, not a complete rules reproduction or a 2024 update.
+
+Geography distinguishes open SRD cosmology (Appendix PH-C, pages 363–365) from campaign-setting facts. The short Forgotten Realms / Toril / Faerûn / Sword Coast orientation is independently worded factual commentary based on these public official sources, accessed 2026-11-18 (Asia/Singapore):
+
+- https://www.dndbeyond.com/resources/2037-the-forgotten-realms
+- https://media.wizards.com/2015/downloads/dnd/SCAG_Preface_3ms9.pdf
+- https://www.dndbeyond.com/posts/1480-what-is-dungeons-dragons
+
+No proprietary map, setting-book prose, adventure, paid subclass or paid background is copied. Referenced setting names and associated source materials remain with their respective rights holders; **the SRD CC license is not presented as a license to the Forgotten Realms setting**.
+
+“星潮海岸” and its four locations are an original illustrative teaching region, not canonical D&D geography. Its SVG map and decorative class-art compositions are original application artwork (MIT). Class and navigation icon glyphs use Lucide (ISC; portions from Feather under MIT). Runtime dependency license notices are preserved in `public/third-party-notices.txt`.
