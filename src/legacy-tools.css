@@ -1,0 +1,596 @@
+/* Styles for the embedded v1 tabletop tools (跑团工具), extracted from the v2 codex stylesheet. */
+.legacy-tools {
+  --line: #344055;
+  --muted: #97a9c0;
+  --serif: inherit;
+  color: #c9d4e6;
+}
+.legacy-tools .app-shell {
+  display: block;
+  min-height: 0;
+}
+.legacy-tools .sidebar,
+.legacy-tools .breadcrumb,
+.legacy-tools footer {
+  display: none !important;
+}
+.legacy-tools .workspace {
+  margin-left: 0;
+}
+.legacy-tools .topbar {
+  height: 50px;
+  padding: 0;
+  background: none;
+  border-color: #2c3a50;
+  justify-content: flex-end;
+  position: static;
+}
+.legacy-tools main {
+  padding: 24px 0 0;
+  max-width: none;
+}
+.legacy-tools .page-heading h1,
+.legacy-tools .page-heading p,
+.legacy-tools .page-heading .eyebrow {
+  display: none;
+}
+.legacy-tools .page-heading {
+  margin-bottom: 20px;
+}
+.legacy-tools .page-heading > .btn {
+  margin-top: 0;
+}
+.legacy-tools .source-tag {
+  background: #243047;
+  color: #91a8c7;
+  border-color: #3c4d68;
+}
+.legacy-tools input,
+.legacy-tools select,
+.legacy-tools textarea {
+  background: #141d2b;
+  border-color: #3b4a62;
+  color: #cbd8ec;
+  font-size: 13px;
+}
+.legacy-tools input::placeholder,
+.legacy-tools textarea::placeholder {
+  color: #697f9e;
+}
+.legacy-tools input[type="checkbox"] {
+  accent-color: #aa95dd;
+}
+.legacy-tools .btn {
+  background: #253247;
+  border-color: #40516d;
+  color: #c3d1e8;
+  font-size: 12px;
+}
+.legacy-tools .btn.primary {
+  background: #b5a1e6;
+  border-color: #b5a1e6;
+  color: #19192b;
+  box-shadow: none;
+}
+.legacy-tools .btn.primary:hover {
+  background: #c9b8f4;
+}
+.legacy-tools .btn:hover:not(:disabled) {
+  background: #344563;
+}
+.legacy-tools .card,
+.legacy-tools .stat,
+.legacy-tools .catalog-card {
+  background: #1b2535;
+  border-color: #344157;
+  box-shadow: none;
+}
+.legacy-tools .card h2,
+.legacy-tools .stat strong {
+  color: #d0d9e8;
+}
+.legacy-tools .eyebrow {
+  color: #7f94b1;
+}
+.legacy-tools .card h3 {
+  color: #bdcde4;
+}
+.legacy-tools .character-banner {
+  background: #202e3d;
+  border-color: #3d4c60;
+  background-image: none;
+}
+.legacy-tools .character-banner:after {
+  color: #92a8c50a;
+}
+.legacy-tools .character-banner h2 {
+  color: #dce5f4;
+}
+.legacy-tools .character-banner p,
+.legacy-tools .character-banner .eyebrow {
+  color: #819aba;
+}
+.legacy-tools .character-emblem {
+  background: #342e4b;
+  border-color: #202b3e;
+  outline-color: #6d608c;
+  color: #b7a1de;
+}
+.legacy-tools .character-emblem > span {
+  background: #a18bc9;
+  border-color: #202b3e;
+}
+.legacy-tools .ghost {
+  background: #293b4f;
+  border-color: #4a5d75;
+  color: #abbfd9;
+}
+.legacy-tools .sheet-tabs {
+  border-color: #354156;
+}
+.legacy-tools .sheet-tabs button {
+  color: #7e91ad;
+}
+.legacy-tools .sheet-tabs button.selected {
+  color: #c5b1f4;
+}
+.legacy-tools .sheet-tabs .selected:after {
+  background: #b49dde;
+}
+.legacy-tools .sheet-tabs b {
+  background: #32364f;
+  color: #b19fcf;
+}
+.legacy-tools .stat > span,
+.legacy-tools .stat > small {
+  color: #859cba;
+}
+.legacy-tools .stat span small {
+  color: #657f9e;
+}
+.legacy-tools .stat svg {
+  color: #6e88a9;
+}
+.legacy-tools .ability {
+  background: #172031;
+  border-color: #36445e;
+}
+.legacy-tools .ability > span,
+.legacy-tools .ability small {
+  color: #8198b8;
+}
+.legacy-tools .ability strong {
+  color: #c4b2ec;
+}
+.legacy-tools .ability input {
+  background: #222e43;
+  color: #c4d4ec;
+  border-color: #3b4a63;
+}
+.legacy-tools .skill {
+  border-color: #2b3a51;
+  color: #a7b9d4;
+}
+.legacy-tools .skill > b,
+.legacy-tools .saving-throws b {
+  color: #c3b0eb;
+}
+.legacy-tools .skill small,
+.legacy-tools .expertise {
+  color: #6f86a6;
+}
+.legacy-tools .hp-display > strong {
+  color: #a6ceb5;
+}
+.legacy-tools .hp-display > span {
+  color: #76938b;
+}
+.legacy-tools .hp-track {
+  background: #30463f;
+}
+.legacy-tools .hp-track span {
+  background: #85b49a;
+}
+.legacy-tools .field > span {
+  color: #95a9c5;
+}
+.legacy-tools .footnote {
+  color: #7e94b3;
+  font-size: 11px;
+}
+.legacy-tools .condition {
+  background: #243048;
+  border-color: #3b4b64;
+  color: #8299ba;
+}
+.legacy-tools .condition.on {
+  background: #3e3b55;
+  border-color: #8b77ad;
+  color: #bda8df;
+}
+.legacy-tools .note-card {
+  background: #242b3d;
+  border-color: #3a435b;
+  color: #8c9abb;
+}
+.legacy-tools .note-card h3,
+.legacy-tools .note-card .text-btn {
+  color: #b39acf;
+}
+.legacy-tools .note-card p {
+  color: #869bbb;
+}
+.legacy-tools .pip {
+  background: #182235;
+  border-color: #648273;
+}
+.legacy-tools .pip.filled {
+  background: #98bca3;
+  border-color: #98bca3;
+}
+.legacy-tools .pip.fail {
+  border-color: #b07c81;
+}
+.legacy-tools .pip.fail.filled {
+  background: #b07c81;
+}
+.legacy-tools .summary-stats b {
+  color: #b9a6e2;
+}
+.legacy-tools .summary-stats > span,
+.legacy-tools .slot-row small,
+.legacy-tools summary {
+  color: #8299b9;
+}
+.legacy-tools .prepared {
+  color: #a0b2cc;
+}
+.legacy-tools .entry-link {
+  color: #c1cfe5;
+}
+.legacy-tools .entry-link small {
+  color: #7f98bb;
+}
+.legacy-tools .mini-rune {
+  background: #302d46;
+  color: #baa6e3;
+  border-color: #554968;
+}
+.legacy-tools .my-list-row {
+  border-color: #324258;
+}
+.legacy-tools .coin-grid .field > span {
+  color: #b6a579;
+}
+.legacy-tools .weight-display {
+  color: #8397b4;
+}
+.legacy-tools .weight-display b {
+  color: #b8c7df;
+}
+.legacy-tools .catalog-toolbar {
+  background: #1a2434;
+  border-color: #32435b;
+}
+.legacy-tools .catalog-toolbar input,
+.legacy-tools .catalog-toolbar select {
+  background: #141e2d;
+  border-color: #34455e;
+  color: #afc1db;
+}
+.legacy-tools .catalog-title > span {
+  color: #c4b2e9;
+}
+.legacy-tools .catalog-title h2 {
+  color: #d2dded;
+}
+.legacy-tools .catalog-title:has(> span) h2,
+.legacy-tools .catalog-meta {
+  color: #8099bd;
+}
+.legacy-tools .entry-category,
+.legacy-tools .results-label {
+  color: #7a92b4;
+}
+.legacy-tools .results-label b {
+  color: #c0a9ec;
+}
+.legacy-tools .catalog-card-top .rune {
+  background: #223347;
+  border-color: #3d526b;
+  color: #8fb3d5;
+}
+.legacy-tools .catalog-card-top .rune.magic {
+  background: #373047;
+  border-color: #514764;
+  color: #baa0e0;
+}
+.legacy-tools .catalog-card-bottom {
+  border-color: #36465f;
+}
+.legacy-tools .tags > span {
+  background: #26334a;
+  color: #8da4c5;
+}
+.legacy-tools .add-btn {
+  background: #3a314f;
+  color: #c6adee;
+  border-color: #5a4676;
+}
+.legacy-tools .notice {
+  background: #222d40;
+  border-color: #3b4b66;
+  color: #92a8c9;
+}
+.legacy-tools .notice.error {
+  background: #3b2831;
+  border-color: #744654;
+  color: #d9a3aa;
+}
+.legacy-tools .save-status {
+  color: #829d9a;
+}
+.legacy-tools .icon-btn {
+  color: #93a9c8;
+}
+.legacy-tools .mobile-character-select > span {
+  color: #8a9fbc;
+}
+.legacy-tools .mobile-character-select select {
+  background: #1c2a3d;
+  border-color: #374b67;
+  color: #b2c6e2;
+}
+.legacy-tools .empty-hero {
+  background: #192335;
+  border-color: #34465f;
+  background-image: none;
+  min-height: 430px;
+}
+.legacy-tools .empty-hero h2 {
+  color: #d1d9e8;
+}
+.legacy-tools .empty-hero > p {
+  color: #869dbf;
+}
+.legacy-tools .empty-features {
+  border-color: #34465f;
+  color: #89a5bd;
+}
+.legacy-tools .hero-art {
+  color: #91a6c0;
+}
+.legacy-tools .hero-art i {
+  background: #192335;
+  color: #c4b08a;
+}
+.legacy-tools .orbit {
+  border-color: #697b9a44;
+}
+.legacy-tools .inline-empty {
+  color: #8294b6;
+}
+.legacy-tools .inline-empty h3 {
+  color: #b2c0d8;
+}
+.legacy-tools .inline-empty p {
+  color: #7f97bb;
+}
+.legacy-tools dialog {
+  background: #1b2638;
+  border-color: #3c4b65;
+  color: #c2cfe4;
+}
+.legacy-tools .dialog-head {
+  background: #1d293b;
+  border-color: #3b4a64;
+}
+.legacy-tools .dialog-head h2 {
+  color: #d2dcee;
+}
+.legacy-tools .dialog-body > p,
+.legacy-tools .dialog-body > ul {
+  color: #91a9cd;
+}
+.legacy-tools .dialog-body h3 {
+  color: #bda6e5;
+}
+.legacy-tools .wizard-steps {
+  border-color: #3b4b65;
+}
+.legacy-tools .wizard-steps span {
+  color: #6f86a9;
+}
+.legacy-tools .wizard-steps .current {
+  color: #c3b1ea;
+}
+.legacy-tools .wizard-steps b {
+  border-color: #576a87;
+}
+.legacy-tools .wizard-steps .current b {
+  background: #8d78b9;
+  border-color: #8d78b9;
+}
+.legacy-tools .check-grid {
+  color: #99b2d7;
+}
+.legacy-tools .segmented {
+  background: #182337;
+  border-color: #3f5070;
+}
+.legacy-tools .segmented button {
+  color: #8b9fc1;
+}
+.legacy-tools .segmented button.selected {
+  background: #433658;
+  color: #cfb9ef;
+}
+.legacy-tools .creation-summary p,
+.legacy-tools .field small {
+  color: #8ba1c0;
+}
+.legacy-tools .rules-text {
+  color: #b0c1db;
+}
+.legacy-tools .detail-grid dt {
+  color: #7e98bd;
+}
+.legacy-tools .text-btn {
+  color: #b09ad8;
+}
+.legacy-tools .toast {
+  background: #3e3457;
+  color: #d7c7f3;
+  left: calc(50% + var(--g-sidebar) / 2);
+  box-shadow: 0 10px 40px #0005;
+}
+.legacy-tools .damage {
+  color: #d19a9c;
+  background: #412d39;
+  border-color: #664251;
+}
+.legacy-tools .heal {
+  color: #a2c9b2;
+  background: #263d3a;
+  border-color: #46685b;
+}
+.legacy-tools a {
+  color: #bca8e8;
+}
+@media (max-width: 960px) {
+  .legacy-tools .sheet-grid {
+    display: block;
+  }
+  .legacy-tools .side-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 17px;
+  }
+  .legacy-tools .skill-list {
+    grid-template-columns: 1fr;
+  }
+  .legacy-tools .abilities {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 700px) {
+  .legacy-tools .side-col {
+    display: block;
+  }
+  .legacy-tools .topbar {
+    height: 44px;
+  }
+  .legacy-tools main {
+    padding-top: 19px;
+  }
+  .legacy-tools .toast {
+    left: 50%;
+  }
+  .legacy-tools .card {
+    padding: 20px 17px;
+  }
+  .legacy-tools .footnote {
+    font-size: 11px;
+  }
+  .legacy-tools .empty-hero {
+    min-height: 470px;
+    padding: 20px 14px;
+  }
+  .legacy-tools .empty-hero h2 {
+    font-size: 19px;
+  }
+  .legacy-tools .empty-hero > p {
+    font-size: 12px;
+  }
+  .legacy-tools .empty-features {
+    gap: 9px;
+  }
+  .legacy-tools .empty-features > span {
+    font-size: 8px;
+  }
+  .legacy-tools .summary-stats b {
+    font-size: 26px;
+  }
+  .legacy-tools .catalog-toolbar > select {
+    font-size: 11px;
+  }
+  .legacy-tools input,
+  .legacy-tools textarea {
+    font-size: 14px;
+  }
+  .legacy-tools .character-banner h2 {
+    font-size: 23px;
+  }
+  .legacy-tools .mobile-character-select select {
+    font-size: 12px;
+  }
+  .legacy-tools .qty {
+    font-size: 12px;
+  }
+  .legacy-tools .entry-link {
+    font-size: 12px;
+  }
+  .legacy-tools .entry-link small {
+    font-size: 10px;
+  }
+}
+@media print {
+  .legacy-tools .topbar {
+    display: none;
+  }
+  .legacy-tools .card {
+    background: #fff !important;
+    border-color: #aaa !important;
+  }
+  .legacy-tools,
+  .legacy-tools .card,
+  .legacy-tools input,
+  .legacy-tools textarea,
+  .legacy-tools .ability,
+  .legacy-tools .stat {
+    color: #111 !important;
+    background: #fff !important;
+  }
+  .legacy-tools .card h2,
+  .legacy-tools .stat strong,
+  .legacy-tools .ability strong,
+  .legacy-tools .hp-display > strong,
+  .legacy-tools .character-banner h2 {
+    color: #111 !important;
+  }
+  .legacy-tools .character-banner {
+    background: #fff !important;
+    border-color: #aaa;
+  }
+}
+.legacy-tools .mobile-character-select {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 530px;
+  margin: 0 0 22px;
+  color: #8fa7c5;
+  font-size: 11px;
+}
+.legacy-tools .mobile-character-select > span {
+  white-space: nowrap;
+}
+.legacy-tools .mobile-character-select select {
+  font-size: 12px;
+  min-height: 40px;
+  background: #1c2a3d;
+  border-color: #374b67;
+  color: #b2c6e2;
+}
+@media (max-width: 700px) {
+  .legacy-tools .mobile-character-select {
+    gap: 10px;
+    font-size: 10px;
+    max-width: none;
+  }
+}
+@media print {
+  .legacy-tools .mobile-character-select {
+    display: none !important;
+  }
+}

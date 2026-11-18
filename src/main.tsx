@@ -1,9 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import Codex from "./Codex";
+import Workbench from "./Workbench";
 import "./style.css";
+import "./legacy-tools.css";
+import "./workbench.css";
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <Codex />
+    <Workbench />
   </StrictMode>,
 );

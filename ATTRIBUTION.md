@@ -13,16 +13,29 @@ This work includes material taken from the System Reference Document 5.1 (“SRD
 - Upstream software is MIT licensed; copyright and license text preserved in `THIRD-PARTY-MIT.txt`.
 - This independent tool is 5E compatible; it is not an official product.
 
-## Chinese codex and setting orientation (v2)
+## Setting library and creative workbench (v3)
 
-Chinese beginner explanations, class / race summaries and examples are authored for this project, adapting SRD 5.1 mechanics where applicable. These are non-official educational summaries, not a complete rules reproduction or a 2024 update.
+All Chinese entry text, theme essays and the example project are written for this project. Each paragraph in an entry is labelled as one of:
 
-Geography distinguishes open SRD cosmology (Appendix PH-C, pages 363–365) from campaign-setting facts. The short Forgotten Realms / Toril / Faerûn / Sword Coast orientation is independently worded factual commentary based on these public official sources, accessed 2026-11-18 (Asia/Singapore):
+- **设定摘要 (sourced summary)** — an independently worded Chinese summary of the cited source and page, not a translation;
+- **编辑解读 (editorial interpretation)** — this project's commentary;
+- **待核实 (unverified)** — a claim located only through a book that was not checked first-hand, or through a secondary source. Such claims are never presented as sourced.
 
-- https://www.dndbeyond.com/resources/2037-the-forgotten-realms
-- https://media.wizards.com/2015/downloads/dnd/SCAG_Preface_3ms9.pdf
-- https://www.dndbeyond.com/posts/1480-what-is-dungeons-dragons
+Sources used, accessed 2026-11-18 (Asia/Singapore):
 
-No proprietary map, setting-book prose, adventure, paid subclass or paid background is copied. Referenced setting names and associated source materials remain with their respective rights holders; **the SRD CC license is not presented as a license to the Forgotten Realms setting**.
+- SRD 5.1 (CC BY 4.0), pages cited per paragraph: https://www.dndbeyond.com/attachments/39j2li89/SRD5.1-CCBY4.0_License_live%20links.pdf
+- SRD v5.2.1 landing page (2024 rules; not yet compared paragraph by paragraph): https://www.dndbeyond.com/srd
+- D&D Basic Rules (2014), Appendix C: The Five Factions (Harpers, Zhentarim; Forgotten Realms): https://www.dndbeyond.com/sources/dnd/basic-rules-2014/appendix-c-the-five-factions
+- D&D Beyond article on the Harpers: https://www.dndbeyond.com/posts/1486-getting-the-most-from-the-harpers-in-your
+- D&D Beyond, The Forgotten Realms: https://www.dndbeyond.com/resources/2037-the-forgotten-realms
+- Sword Coast Adventurer's Guide free preface: https://media.wizards.com/2015/downloads/dnd/SCAG_Preface_3ms9.pdf
+- Books cited by title only and never quoted: Monster Manual (2014), Dungeon Master's Guide (2014), Player's Handbook (2014), Xanathar's Guide to Everything (2017).
+- Secondary source used only to locate a book passage (True Name case study): https://rpg.stackexchange.com/questions/137721/i-have-a-demons-true-name-now-what
 
-“星潮海岸” and its four locations are an original illustrative teaching region, not canonical D&D geography. Its SVG map and decorative class-art compositions are original application artwork (MIT). Class and navigation icon glyphs use Lucide (ISC; portions from Feather under MIT). Runtime dependency license notices are preserved in `public/third-party-notices.txt`.
+Faction and setting names (Forgotten Realms, Harpers, Zhentarim, the Nine Hells, named archdevils, etc.) remain with their rights holders; **the SRD CC license is not presented as a license to the Forgotten Realms setting or other non-SRD material**. The example project “灰港契约（原创示例）” and its characters, places, relationships and plot are original fiction, not official setting.
+
+### Illustrations
+
+The 22 images in `public/art/` are original semi-realistic digital paintings generated for this project with an AI image tool in November 2026, then converted to WebP. They depict no real people, contain no text, and are not official D&D artwork. They are released with the project under the MIT license as far as any rights exist in them.
+
+Icons use Lucide (ISC; portions from Feather under MIT). Runtime dependency license notices are preserved in `public/third-party-notices.txt`.

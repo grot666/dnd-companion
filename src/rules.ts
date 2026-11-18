@@ -16,31 +16,7 @@ export const abilityNames: Record<Ability, string> = {
   wis: "感知",
   cha: "魅力",
 };
-export const classNames: Record<string, string> = {
-  barbarian: "野蛮人",
-  bard: "吟游诗人",
-  cleric: "牧师",
-  druid: "德鲁伊",
-  fighter: "战士",
-  monk: "武僧",
-  paladin: "圣武士",
-  ranger: "游侠",
-  rogue: "游荡者",
-  sorcerer: "术士",
-  warlock: "邪术师",
-  wizard: "法师",
-};
-export const raceNames: Record<string, string> = {
-  dwarf: "矮人",
-  elf: "精灵",
-  halfling: "半身人",
-  human: "人类",
-  dragonborn: "龙裔",
-  gnome: "侏儒",
-  "half-elf": "半精灵",
-  "half-orc": "半兽人",
-  tiefling: "提夫林",
-};
+export { classNames, raceNames } from "./names";
 export const skillNames: Record<string, string> = {
   acrobatics: "体操",
   "animal-handling": "驯兽",

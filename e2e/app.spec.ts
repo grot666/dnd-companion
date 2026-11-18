@@ -1,18 +1,11 @@
 import { test, expect } from "@playwright/test";
 import type { Page } from "@playwright/test";
+const toolTab: Record<string, string> = { 法术: "法术目录", 装备与魔法物品: "物品目录", 角色工具: "角色卡" };
 async function nav(page: Page, label: string) {
-  const mobile = page.getByRole("button", { name: "打开导航", exact: true });
-  if (await mobile.isVisible()) {
-    await mobile.click();
-    await page
-      .getByRole("dialog")
-      .getByRole("button", { name: label, exact: true })
-      .click();
-  } else
-    await page
-      .getByRole("navigation", { name: "百科导航", exact: true })
-      .getByRole("button", { name: label, exact: true })
-      .click();
+  await page
+    .getByRole("tablist", { name: "工具" })
+    .getByRole("tab", { name: toolTab[label] ?? label, exact: true })
+    .click();
 }
 async function create(page: Page, name = "瑟林·星羽") {
   await page.getByRole("button", { name: "新的旅人", exact: true }).click();
@@ -30,19 +23,17 @@ test("create, damage, spells, inventory and persistence", async ({
 }, info) => {
   const errors: string[] = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto("#tools");
+  await page.goto("#/tools");
   await create(page);
   await page.getByLabel("伤害或治疗数值").fill("3");
   await page.getByRole("button", { name: "− 受伤", exact: true }).click();
   await expect(page.getByTestId("current-hp")).toHaveText("5");
   await nav(page, "法术");
-  await page.getByRole("tab", { name: /法术速查/ }).click();
   await page.getByLabel("搜索法术或物品").fill("魔法飞弹");
   await page
     .getByRole("button", { name: "添加 Magic Missile", exact: true })
     .click();
   await nav(page, "装备与魔法物品");
-  await page.getByRole("tab", { name: "物品速查" }).click();
   await page.getByLabel("搜索法术或物品").fill("Longsword");
   await page
     .getByRole("button", { name: "添加 Longsword", exact: true })
@@ -80,7 +71,7 @@ test("create, damage, spells, inventory and persistence", async ({
   expect(errors).toEqual([]);
 });
 test("point-buy validation and long rest", async ({ page }) => {
-  await page.goto("#tools");
+  await page.goto("#/tools");
   await page.getByRole("button", { name: "新的旅人", exact: true }).click();
   const d = page.getByRole("dialog");
   await d.getByLabel("角色姓名").fill("购点旅人");
@@ -102,7 +93,7 @@ test("point-buy validation and long rest", async ({ page }) => {
   await expect(page.getByTestId("current-hp")).toHaveText("9");
 });
 test("backup round trip and malformed import protection", async ({ page }) => {
-  await page.goto("#tools");
+  await page.goto("#/tools");
   await create(page, "备份旅人");
   const downloadPromise = page.waitForEvent("download");
   await page.getByRole("button", { name: "导出备份", exact: true }).click();
@@ -135,7 +126,7 @@ test("backup round trip and malformed import protection", async ({ page }) => {
 test("duplicate, custom content, delete confirmation and switching", async ({
   page,
 }, info) => {
-  await page.goto("#tools");
+  await page.goto("#/tools");
   await create(page, "第一位");
   await page.getByRole("tab", { name: /笔记与设置/ }).click();
   await page.getByLabel("特性、语言、羁绊与冒险记录").fill("和朋友去龙之谷");
@@ -168,7 +159,7 @@ test("duplicate, custom content, delete confirmation and switching", async ({
   }
 });
 test("catalog details and responsive empty state", async ({ page }, info) => {
-  await page.goto("#tools");
+  await page.goto("#/tools");
   await expect(
     page.getByRole("button", { name: "创建第一位角色" }),
   ).toBeVisible();
@@ -177,7 +168,6 @@ test("catalog details and responsive empty state", async ({ page }, info) => {
     fullPage: true,
   });
   await nav(page, "法术");
-  await page.getByRole("tab", { name: /法术速查/ }).click();
   await page.getByLabel("法术环阶").selectOption("3");
   await page.getByLabel("搜索法术或物品").fill("Fireball");
   await page.getByRole("button", { name: "火球术 Fireball" }).click();
@@ -200,7 +190,7 @@ test("damaged local save is not silently overwritten", async ({ page }) => {
   await page.addInitScript(() =>
     localStorage.setItem("wayfarer-5e-v1", "{broken"),
   );
-  await page.goto("#tools");
+  await page.goto("#/tools");
   await expect(page.getByRole("alert")).toContainText("暂停自动保存");
   expect(
     await page.evaluate(() => localStorage.getItem("wayfarer-5e-v1")),

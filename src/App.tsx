@@ -367,7 +367,7 @@ function Wizard({
           </div>
           <div className="notice">
             这是一张可编辑的基础角色卡，不自动完成亚种族、专长、子职、升级特性或兼职。HP
-            使用首级满骰、以后固定平均值；装备、初始金币与法术待你选择。请与 DM
+            使用首级满骰、以后固定平均值；装备、初始金币与法术需另行选择。请与 DM
             核对。
           </div>
         </>
@@ -653,7 +653,7 @@ export default function App({
             </button>
           ))}
           {!state.characters.length && (
-            <p className="sidebar-empty">空白的一页，等待你的故事。</p>
+            <p className="sidebar-empty">暂无角色。</p>
           )}
         </div>
         <div className="sidebar-bottom">
@@ -749,17 +749,17 @@ export default function App({
             <div>
               <div className="eyebrow">
                 {view === "sheet"
-                  ? "EVERY ADVENTURE STARTS WITH A CHARACTER"
+                  ? "CHARACTER SHEETS"
                   : view === "spells"
-                    ? "KNOWLEDGE IS ITS OWN KIND OF MAGIC"
-                    : "PACK LIGHT. ADVENTURE FAR."}
+                    ? "SRD 5.1 SPELLS"
+                    : "SRD 5.1 ITEMS"}
               </div>
               <h1>
                 {view === "sheet"
-                  ? "你的冒险，由此落笔。"
+                  ? "角色卡"
                   : view === "spells"
-                    ? "翻开法术典籍。"
-                    : "下一段旅途，准备妥当。"}
+                    ? "法术目录"
+                    : "物品目录"}
               </h1>
               <p>
                 {view === "sheet"
@@ -813,12 +813,10 @@ export default function App({
                   <span className="orbit two" />
                   <i>✦</i>
                 </div>
-                <span className="eyebrow">A BLANK PAGE. AN OPEN ROAD.</span>
-                <h2>每一个传奇，都始于一个名字。</h2>
+                <span className="eyebrow">NO CHARACTERS YET</span>
+                <h2>暂无角色卡</h2>
                 <p>
-                  创建你的第一位旅人，管理生命、法术与行囊。
-                  <br />
-                  规则已在手边，故事由你书写。
+                  角色卡记录生命值、护甲等级、法术位与物品，保存在本浏览器（未同步到 GitHub）。
                 </p>
                 <button className="btn primary" onClick={() => setWizard(true)}>
                   <Feather size={18} /> 创建第一位角色
@@ -1162,7 +1160,7 @@ export default function App({
                         <Feather size={23} />
                         <h3>好故事，值得备份。</h3>
                         <p>
-                          存档不会离开你的设备。换浏览器或清理缓存前，记得导出。
+                          存档只保存在本浏览器，未同步到 GitHub。更换浏览器或清理缓存前，请先导出备份。
                         </p>
                         <button className="text-btn" onClick={backup}>
                           导出角色备份 <ChevronRight size={14} />
@@ -1540,7 +1538,7 @@ export default function App({
                           rows={16}
                           value={c.notes}
                           maxLength={50000}
-                          placeholder="记下你的故事、职业能力、亚种族特性与尚未兑现的承诺……"
+                          placeholder="职业能力、亚种族特性、背景与未兑现的承诺……"
                           onChange={(e) => update({ notes: e.target.value })}
                         />
                       </Field>
@@ -1576,7 +1574,7 @@ export default function App({
                       />
                       <p className="footnote">
                         升级自动重算熟练、固定平均 HP 与基础法术位；当前 HP
-                        不变。升级所得能力、属性与额外生命骰由你调整。
+                        不变。升级所得能力、属性与额外生命骰需手动调整。
                       </p>
                       <h3>手动覆盖</h3>
                       <div className="grid three">
