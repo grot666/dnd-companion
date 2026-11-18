@@ -1,36 +1,38 @@
 import { useEffect, useState } from "react";
 
-export type ProjectTab = "overview" | "characters" | "relationships" | "plots" | "locations" | "settings";
-export const projectTabs: [ProjectTab, string][] = [
+export type SeriesTab = "overview" | "world" | "characters" | "places" | "stories" | "timeline" | "adoptions";
+export const seriesTabs: [SeriesTab, string][] = [
   ["overview", "概览"],
-  ["characters", "角色"],
-  ["relationships", "关系"],
-  ["plots", "情节"],
-  ["locations", "地点"],
-  ["settings", "设定改编"],
+  ["world", "世界"],
+  ["characters", "人物"],
+  ["places", "地点与势力"],
+  ["stories", "故事"],
+  ["timeline", "时间线"],
+  ["adoptions", "采用的设定"],
 ];
+export type StoryMode = "read" | "edit" | "influence";
 
 export type Route =
   | { name: "home" }
-  | { name: "browse"; cat: string; q: string }
+  | { name: "series"; id: string; tab: SeriesTab; item: string; story: string; mode: StoryMode; pub: boolean }
+  | { name: "library"; cat: string; q: string }
   | { name: "entry"; slug: string; tab: string }
   | { name: "themes"; q: string }
   | { name: "theme"; slug: string }
-  | { name: "projects" }
-  | { name: "project"; id: string; tab: ProjectTab; item: string }
-  | { name: "favorites" }
+  | { name: "drafts" }
   | { name: "tools"; view: "sheet" | "spells" | "items"; q: string };
 
 const legacy: Record<string, string> = {
   "#tools": "#/tools",
   "#spells": "#/tools/spells",
   "#equipment": "#/tools/items",
-  "#classes": "#/browse?cat=class",
-  "#races": "#/browse?cat=race",
-  "#backgrounds": "#/browse?cat=background",
-  "#world": "#/browse?cat=plane",
+  "#classes": "#/library?cat=class",
+  "#races": "#/library?cat=race",
+  "#backgrounds": "#/library?cat=background",
+  "#world": "#/library?cat=plane",
   "#start": "#/",
 };
+const v3Tab: Record<string, SeriesTab> = { characters: "characters", relationships: "characters", plots: "stories", locations: "places", settings: "adoptions" };
 
 export function parseHash(hash: string): Route {
   const h = legacy[hash] ?? hash;
@@ -42,30 +44,49 @@ export function parseHash(hash: string): Route {
   switch (parts[0]) {
     case undefined:
       return { name: "home" };
-    case "browse":
-      return { name: "browse", cat: params.get("cat") ?? "", q };
+    case "library":
+    case "browse": // round-3 links
+      return { name: "library", cat: params.get("cat") ?? "", q };
+    case "favorites":
+      return { name: "library", cat: "fav", q: "" };
     case "entry":
-      return parts[1] ? { name: "entry", slug: parts[1], tab: params.get("tab") ?? "body" } : { name: "browse", cat: "", q: "" };
+      return parts[1] ? { name: "entry", slug: parts[1], tab: params.get("tab") ?? "body" } : { name: "library", cat: "", q: "" };
     case "themes":
       return parts[1] ? { name: "theme", slug: parts[1] } : { name: "themes", q };
-    case "projects": {
-      if (!parts[1]) return { name: "projects" };
-      const tab = (parts[2] ?? "overview") as ProjectTab;
+    case "drafts":
+      return { name: "drafts" };
+    case "projects": // round-3 project links: projects became series with the same id
+      return parts[1] ? seriesRoute(parts[1], v3Tab[parts[2] ?? ""] ?? "overview") : { name: "home" };
+    case "series": {
+      if (!parts[1]) return { name: "home" };
+      const tab = (parts[2] ?? "overview") as SeriesTab;
+      const mode = params.get("mode");
       return {
-        name: "project",
+        name: "series",
         id: parts[1],
-        tab: projectTabs.some(([t]) => t === tab) ? tab : "overview",
-        item: params.get("item") ?? "",
+        tab: seriesTabs.some(([t]) => t === tab) ? tab : "overview",
+        item: parts[3] ?? "",
+        story: params.get("story") ?? "",
+        mode: mode === "edit" || mode === "influence" ? mode : "read",
+        pub: params.get("pub") === "1",
       };
     }
-    case "favorites":
-      return { name: "favorites" };
     case "tools":
       return { name: "tools", view: parts[1] === "spells" ? "spells" : parts[1] === "items" ? "items" : "sheet", q };
     default:
       return { name: "home" };
   }
 }
+
+export const seriesRoute = (id: string, tab: SeriesTab = "overview", item = "", extra: { story?: string; mode?: StoryMode; pub?: boolean } = {}): Route => ({
+  name: "series",
+  id,
+  tab,
+  item,
+  story: extra.story ?? "",
+  mode: extra.mode ?? "read",
+  pub: extra.pub ?? false,
+});
 
 export function href(r: Route): string {
   const qs = (o: Record<string, string>) => {
@@ -77,20 +98,18 @@ export function href(r: Route): string {
   switch (r.name) {
     case "home":
       return "#/";
-    case "browse":
-      return `#/browse${qs({ cat: r.cat, q: r.q })}`;
+    case "series":
+      return `#/series/${encodeURIComponent(r.id)}/${r.tab}${r.item ? `/${encodeURIComponent(r.item)}` : ""}${qs({ story: r.story, mode: r.mode === "read" ? "" : r.mode, pub: r.pub ? "1" : "" })}`;
+    case "library":
+      return `#/library${qs({ cat: r.cat, q: r.q })}`;
     case "entry":
       return `#/entry/${encodeURIComponent(r.slug)}${r.tab && r.tab !== "body" ? qs({ tab: r.tab }) : ""}`;
     case "themes":
       return `#/themes${qs({ q: r.q })}`;
     case "theme":
       return `#/themes/${encodeURIComponent(r.slug)}`;
-    case "projects":
-      return "#/projects";
-    case "project":
-      return `#/projects/${encodeURIComponent(r.id)}/${r.tab}${qs({ item: r.item })}`;
-    case "favorites":
-      return "#/favorites";
+    case "drafts":
+      return "#/drafts";
     case "tools":
       return `#/tools${r.view === "sheet" ? "" : `/${r.view}`}${qs({ q: r.q })}`;
   }
@@ -111,9 +130,6 @@ const writeScroll = (hash: string, y: number) => {
   m[hash] = y;
   sessionStorage.setItem(SCROLL_KEY, JSON.stringify(m));
 };
-export function markForward() {
-  forward = true;
-}
 
 export function navigate(to: string, opts: { replace?: boolean } = {}) {
   if (opts.replace) {
@@ -152,14 +168,12 @@ export function useRoute(): Route {
       const restore = !forward;
       forward = false;
       const y = restore ? readScroll()[next] ?? 0 : 0;
-      // Wait for the new page to render before scrolling.
       requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, y)));
     };
     const onReplace = () => {
       current = location.hash || "#/";
       setHash(current);
     };
-    // Initial load / refresh: restore the remembered position for this hash.
     const initial = readScroll()[current];
     if (initial) requestAnimationFrame(() => requestAnimationFrame(() => window.scrollTo(0, initial)));
     window.addEventListener("hashchange", onHash);

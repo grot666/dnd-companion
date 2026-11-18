@@ -1,10 +1,13 @@
 // Source registry. Every URL here was opened and checked on 2026-11-18 (Asia/Singapore).
 // Books without an open URL are cited by title only and never quoted.
 export type SourceKind = "open" | "official-free" | "book" | "secondary";
+/** How the material may be used here. Independent of whether a claim is verified. */
+export type License = "cc-by" | "link-summary" | "title-only" | "community-link";
 export type Source = {
   id: string;
   title: string;
   kind: SourceKind;
+  license: License;
   edition: string;
   url?: string;
   note: string;
@@ -15,22 +18,52 @@ export const sources: Record<string, Source> = {
     id: "srd51",
     title: "System Reference Document 5.1（SRD 5.1）",
     kind: "open",
+    license: "cc-by",
     edition: "2014 版规则",
     url: "https://www.dndbeyond.com/attachments/39j2li89/SRD5.1-CCBY4.0_License_live%20links.pdf",
-    note: "Wizards of the Coast 以 CC-BY-4.0 发布。本站标注的页码对应该 PDF。",
+    note: "Wizards of the Coast 以 CC-BY-4.0 发布。页码对应该 PDF。",
   },
   srd521: {
     id: "srd521",
     title: "System Reference Document v5.2.1（SRD 5.2.1）",
     kind: "open",
+    license: "cc-by",
     edition: "2024 版规则",
-    url: "https://www.dndbeyond.com/srd",
-    note: "2024 版规则的开放文档。本站尚未逐条对照 5.2.1，引用处会单独说明。",
+    url: "https://media.dndbeyond.com/compendium-images/srd/5.2/SRD_CC_v5.2.1.pdf",
+    note: "2024 版规则的开放文档，Wizards of the Coast 以 CC-BY-4.0 发布。页码对应该 PDF。",
+  },
+  fr2024: {
+    id: "fr2024",
+    title: "D&D Free Rules（2024）：Character Classes",
+    kind: "official-free",
+    license: "link-summary",
+    edition: "2024 版规则",
+    url: "https://www.dndbeyond.com/sources/dnd/free-rules/character-classes",
+    note: "D&D Beyond 上的官方免费规则，含各职业的介绍文字。",
+  },
+  ddbLich: {
+    id: "ddbLich",
+    title: "D&D Beyond：Tomb of Horrors: The Lore Behind This Iconic Dungeon（2022）",
+    kind: "official-free",
+    license: "link-summary",
+    edition: "第五版设定",
+    url: "https://www.dndbeyond.com/posts/1253-tomb-of-horrors-the-lore-behind-this-iconic",
+    note: "官方站点文章，“The Lich Lying in Wait”一节介绍巫妖与命匣。",
+  },
+  wotc4eShadowfell: {
+    id: "wotc4eShadowfell",
+    title: "Wizards of the Coast：The Shadowfell（2011，第四版，存档页）",
+    kind: "official-free",
+    license: "link-summary",
+    edition: "第四版",
+    url: "https://web.archive.org/web/20151104091120/archive.wizards.com/dnd/Article.aspx?x=dnd%2F4ex%2F20110418",
+    note: "第四版产品 Shadowfell: Gloomwrought and Beyond 的官方预览文章，经 Internet Archive 存档。",
   },
   srdHub: {
     id: "srdHub",
     title: "Wizards of the Coast：Systems Reference Document 说明页",
     kind: "official-free",
+    license: "link-summary",
     edition: "通用",
     url: "https://dnd.wizards.com/resources/systems-reference-document",
     note: "官方对 SRD 授权与版本的说明。",
@@ -39,6 +72,7 @@ export const sources: Record<string, Source> = {
     id: "data5ebits",
     title: "5e-bits/5e-srd-api 中的 2014 英文 JSON（固定提交 3b6da29）",
     kind: "open",
+    license: "cc-by",
     edition: "2014 版规则",
     url: "https://github.com/5e-bits/5e-srd-api/tree/3b6da29a45b3b328c2409cf97a14e2507e291bf8/packages/5e-database/src/2014/en",
     note: "法术、物品、职业与种族目录的数据来源；数据本身来自 SRD 5.1。",
@@ -47,6 +81,7 @@ export const sources: Record<string, Source> = {
     id: "basicFactions",
     title: "D&D Basic Rules（2014）附录 C：五大派系",
     kind: "official-free",
+    license: "link-summary",
     edition: "2014 版 · 被遗忘的国度",
     url: "https://www.dndbeyond.com/sources/dnd/basic-rules-2014/appendix-c-the-five-factions",
     note: "官方免费规则中的派系介绍，设定为被遗忘的国度（Forgotten Realms）。",
@@ -55,6 +90,7 @@ export const sources: Record<string, Source> = {
     id: "harpersPost",
     title: "D&D Beyond：Getting the Most From the Harpers in Your Forgotten Realms Campaign",
     kind: "official-free",
+    license: "link-summary",
     edition: "被遗忘的国度",
     url: "https://www.dndbeyond.com/posts/1486-getting-the-most-from-the-harpers-in-your",
     note: "官方站点文章，介绍竖琴手的历史定位与常见对手。",
@@ -63,6 +99,7 @@ export const sources: Record<string, Source> = {
     id: "realmsResource",
     title: "D&D Beyond：The Forgotten Realms",
     kind: "official-free",
+    license: "link-summary",
     edition: "被遗忘的国度",
     url: "https://www.dndbeyond.com/resources/2037-the-forgotten-realms",
     note: "官方站点的被遗忘的国度设定概览。",
@@ -71,6 +108,7 @@ export const sources: Record<string, Source> = {
     id: "scagPreface",
     title: "Sword Coast Adventurer's Guide 序言（官方免费 PDF）",
     kind: "official-free",
+    license: "link-summary",
     edition: "2014 版 · 被遗忘的国度",
     url: "https://media.wizards.com/2015/downloads/dnd/SCAG_Preface_3ms9.pdf",
     note: "剑湾设定书的官方免费序言。",
@@ -79,6 +117,7 @@ export const sources: Record<string, Source> = {
     id: "mm2014",
     title: "Monster Manual（2014）",
     kind: "book",
+    license: "title-only",
     edition: "2014 版",
     note: "非开放内容，只列书名与位置，不转载原文。",
   },
@@ -86,6 +125,7 @@ export const sources: Record<string, Source> = {
     id: "dmg2014",
     title: "Dungeon Master's Guide（2014）",
     kind: "book",
+    license: "title-only",
     edition: "2014 版",
     note: "非开放内容，只列书名与位置，不转载原文。",
   },
@@ -93,6 +133,7 @@ export const sources: Record<string, Source> = {
     id: "phb2014",
     title: "Player's Handbook（2014）",
     kind: "book",
+    license: "title-only",
     edition: "2014 版",
     note: "非开放内容，只列书名与位置，不转载原文。",
   },
@@ -100,6 +141,7 @@ export const sources: Record<string, Source> = {
     id: "xgte",
     title: "Xanathar's Guide to Everything（2017）",
     kind: "book",
+    license: "title-only",
     edition: "2014 版规则扩展",
     note: "非开放内容，只列书名与位置，不转载原文。",
   },
@@ -107,6 +149,7 @@ export const sources: Record<string, Source> = {
     id: "seTrueName",
     title: "RPG Stack Exchange：I have a demon's true name. Now what?",
     kind: "secondary",
+    license: "community-link",
     edition: "二手资料",
     url: "https://rpg.stackexchange.com/questions/137721/i-have-a-demons-true-name-now-what",
     note: "社区问答，引用了 Monster Manual 的相关段落。只用于定位原书位置，不作为最终依据。",
@@ -118,4 +161,11 @@ export const kindLabel: Record<SourceKind, string> = {
   "official-free": "官方免费资料",
   book: "书目（未转载）",
   secondary: "二手资料",
+};
+
+export const licenseLabel: Record<License, string> = {
+  "cc-by": "CC BY 4.0，可改写引用",
+  "link-summary": "官方页面，仅链接与独立摘要",
+  "title-only": "版权书目，仅列书名",
+  "community-link": "社区内容，仅链接",
 };

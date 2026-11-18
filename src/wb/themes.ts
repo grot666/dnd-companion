@@ -22,7 +22,7 @@ export const themes: Theme[] = [
         title: "掌握他人的秘密而获得影响力",
         tags: ["秘密", "要挟", "情报", "影响力"],
         entries: ["true-name", "zhentarim", "harpers", "pact", "warlock", "rogue"],
-        note: "资料中可参照的结构：真名条目记录了“知道名字带来部分控制”的有限出处（只涉及恶魔，待核实）；散塔林会以利益交换维系影响；竖琴手以情报网络影响统治者；邪术师的契约本身也可能成为被他人掌握的秘密。",
+        note: "资料中可参照的结构：散塔林会以利益交换维系影响；竖琴手以情报网络影响统治者；邪术师的契约本身也可能成为被他人掌握的秘密；异界之门只认真实的名字，名字因此可能值得隐藏。",
       },
       {
         title: "力量有给予者，也就能被收回或被要挟",
@@ -83,7 +83,7 @@ export const themes: Theme[] = [
       { slug: "pact", why: "规则文本中契约与束缚的汇总。" },
       { slug: "warlock", why: "以交易获得力量的职业。" },
       { slug: "oath", why: "约束自身的承诺。" },
-      { slug: "devils", why: "守序邪恶的邪魔，常与契约形象相连（部分待核实）。" },
+      { slug: "devils", why: "守序邪恶的邪魔，与九层地狱紧密绑定。" },
       { slug: "nine-hells", why: "魔鬼所在的下层位面。" },
       { slug: "true-name", why: "召唤与控制中名字的作用。" },
     ],
@@ -122,7 +122,7 @@ export const themes: Theme[] = [
       },
     ],
     entries: [
-      { slug: "true-name", why: "名字与控制：核实案例。" },
+      { slug: "true-name", why: "异界之门只认真实的名字，化名与头衔无效。" },
       { slug: "harpers", why: "伪装、身份与情报网络。" },
       { slug: "rogue", why: "盗贼黑话与情报。" },
       { slug: "lich", why: "命匣所在地即是秘密。" },

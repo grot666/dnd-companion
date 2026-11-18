@@ -1,18 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { loadWb, saveWb, type Project, type WbState } from "./project";
+import { loadWb, saveWb, touch, type Series, type WbState } from "./series";
 
 export function useWorkbench() {
   const [boot] = useState(() => loadWb());
   const [state, setState] = useState<WbState>(boot.state);
   const [blocked, setBlocked] = useState(boot.blocked);
   const [warning, setWarning] = useState(boot.warning);
+  const [notice, setNotice] = useState(boot.notice);
   const [savedAt, setSavedAt] = useState<string>("");
   const first = useRef(true);
 
   useEffect(() => {
+    // Persist a migration immediately; otherwise skip the initial render.
     if (first.current) {
       first.current = false;
-      return;
+      if (!boot.state.migratedFrom || blocked) return;
     }
     if (blocked) return;
     try {
@@ -21,10 +23,10 @@ export function useWorkbench() {
     } catch (e) {
       setWarning(`保存失败：${(e as Error).message}`);
     }
-  }, [state, blocked]);
+  }, [state, blocked, boot.state.migratedFrom]);
 
-  const updateProject = useCallback((id: string, fn: (p: Project) => Project) => {
-    setState((s) => ({ ...s, projects: s.projects.map((p) => (p.id === id ? fn(p) : p)) }));
+  const updateSeries = useCallback((id: string, fn: (s: Series) => Series) => {
+    setState((st) => ({ ...st, series: st.series.map((s) => (s.id === id ? touch(fn(s)) : s)) }));
   }, []);
 
   const resumeSaving = useCallback(() => {
@@ -32,6 +34,6 @@ export function useWorkbench() {
     setWarning("");
   }, []);
 
-  return { state, setState, updateProject, blocked, warning, savedAt, resumeSaving };
+  return { state, setState, updateSeries, blocked, warning, notice, dismissNotice: () => setNotice(""), savedAt, resumeSaving };
 }
 export type WorkbenchApi = ReturnType<typeof useWorkbench>;

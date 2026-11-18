@@ -1,11 +1,11 @@
-import type { Block, Category, Entry } from "./types";
+import type { Block, Category, Draft, Entry } from "./types";
 import classes from "../data/Classes.json";
 import races from "../data/Races.json";
 import { classNames, raceNames } from "../names";
 
 const S = (text: string, ...cite: [string, string][]): Block => ({ p: "source", text, cite });
 const E = (text: string): Block => ({ p: "editorial", text });
-const U = (text: string, ...cite: [string, string][]): Block => ({ p: "unverified", text, cite });
+const D = (claim: string, located: [string, string][], missing: string, blocker: string): Draft => ({ claim, located, missing, blocker });
 const art = (name: string, focus: string, alt: string) => ({ src: `art/${name}.webp`, focus, alt });
 
 export const categoryNames: Record<Category, string> = {
@@ -33,7 +33,7 @@ const SRD14 = "2014 · SRD 5.1";
 const GENERIC = "通用（不限定世界观）";
 const FR = "被遗忘的国度（Forgotten Realms）";
 
-const deep: Entry[] = [
+const deepRaw: Entry[] = [
   {
     slug: "warlock",
     zh: "邪术师",
@@ -69,15 +69,16 @@ const deep: Entry[] = [
       {
         title: "条件与限制",
         blocks: [
-          E("SRD 5.1 描述了交易的存在及其带来的特性，但没有规定条款、代价、期限，也没有统一的“违约收回力量”规则。这些内容通常由战役设定或主持人决定。"),
-          U("常见说法“邪术师不服从恩主就会失去法术”，在 SRD 5.1 中没有找到对应规则；是否出自其他书目，待核实。"),
+          S("SRD 5.1 描述了交易的存在及其带来的特性，但没有规定条款、代价、期限，也没有“违背恩主即失去法术”的规则。", ["srd51", "第 46–50 页"]),
+          S("2024 版免费规则的职业介绍写明，邪术师与恩主的关系各不相同：有的敬重、崇拜甚至爱慕恩主，有的勉强服侍，也有的一边使用恩主给予的力量，一边设法削弱恩主。", ["fr2024", "Warlock 职业介绍"]),
+          E("交易的条款与违约后果因此留给战役设定或主持人决定，可以成为人物关系的核心。"),
         ],
       },
       {
         title: "社会与组织",
         blocks: [
           S("侍奉同一恩主的邪术师可能把彼此视为盟友、手足或对手。", ["srd51", "第 50 页"]),
-          E("邪术师在社会中的处境常取决于恩主的名声：与魔鬼立约者容易被教会和圣武士视为威胁，与妖精立约者则可能卷入人情与承诺的往来。这是常见的叙事处理，不是规则。"),
+          E("邪术师在社会中的处境常取决于恩主的名声：与魔鬼立约者容易被教会和圣武士视为威胁，与妖精立约者则可能卷入人情与承诺的往来。"),
         ],
       },
     ],
@@ -90,7 +91,10 @@ const deep: Entry[] = [
       ],
       cite: [["srd51", "第 46–48 页"]],
     },
-    sources: [["srd51", "第 46–50 页（邪术师、邪魔恩主）"]],
+    sources: [
+      ["srd51", "第 46–50 页（邪术师、邪魔恩主）"],
+      ["fr2024", "Warlock 职业介绍"],
+    ],
     related: ["pact", "devils", "nine-hells", "true-name", "paladin", "soul-death"],
     themes: ["pact", "power", "secrets"],
     tags: ["恩主", "契约", "交易", "依附", "力量代价", "魔鬼"],
@@ -119,7 +123,7 @@ const deep: Entry[] = [
         title: "力量来源",
         blocks: [
           E("在 SRD 5.1 的结构里，誓言而非某位特定神祇决定圣武士的子职业与能力方向。圣武士可以与神庙关系密切，但文本没有要求其力量必须来自神祇。"),
-          U("“圣武士的力量来自对誓言的坚守本身”这一说法通常引自 Player's Handbook（2014）的职业介绍，本站未对照原书，待核实。", ["phb2014", "圣武士章节，页码待核实"]),
+          S("2024 版免费规则的职业介绍把誓言本身称为力量的来源：无论是在神坛前、在自然精魂的圣林中，还是在绝望与悲痛中只以死者为见证，誓言都是一种强大的约束，使虔诚的战士成为受祝福的勇士。", ["fr2024", "Paladin 职业介绍"]),
         ],
       },
       {
@@ -134,6 +138,7 @@ const deep: Entry[] = [
             ["srd51", "第 33–34 页"],
           ),
           S("若圣武士故意违誓且毫无悔意，后果会更严重：由主持人裁定，可能被迫放弃这一职业。", ["srd51", "第 34 页"]),
+          S("2024 版保留了这一结构，但不再要求向同信仰的牧师或同骑士团成员求赦：违誓者通常以彻夜守夜或禁食表示忏悔，经过宽恕仪式后重新开始；毫无悔意者应与主持人商量，改选更合适的子职业，甚至放弃这一职业。", ["fr2024", "Paladin：Breaking Your Oath"]),
         ],
       },
       {
@@ -152,7 +157,18 @@ const deep: Entry[] = [
       ],
       cite: [["srd51", "第 30–33 页"]],
     },
-    sources: [["srd51", "第 30–34 页（圣武士、奉献之誓、违背誓言）"]],
+    sources: [
+      ["srd51", "第 30–34 页（圣武士、奉献之誓、违背誓言）"],
+      ["fr2024", "Paladin 职业介绍、Breaking Your Oath"],
+    ],
+    drafts: [
+      D(
+        "2014 年版 Player's Handbook 的圣武士介绍也把誓言描述为力量来源。",
+        [["phb2014", "圣武士章节"]],
+        "Player's Handbook（2014）圣武士章节原文与页码。",
+        "原书不在开放或官方免费资料中；2014 年 Basic Rules 免费版不含圣武士。2024 版的对应说法已核实并写入正文。",
+      ),
+    ],
     related: ["oath", "cleric", "celestials", "pact", "acolyte"],
     themes: ["faith", "pact", "secrets"],
     tags: ["誓言", "骑士团", "信条", "违誓", "忏悔"],
@@ -166,7 +182,7 @@ const deep: Entry[] = [
     summary: "经由神祇获得神力的施法者。神力以“神圣领域”的形式体现，牧师与神庙、信众之间有明确的义务关系。",
     edition: SRD14,
     setting: GENERIC,
-    image: art("entry-cleric", "55% 35%", "神庙临时病房里，年轻牧师把发光的手掌放在发烧孩子的额头上"),
+    image: art("entry-cleric", "58% 40%", "石砌神龛里，披头巾的中年牧师把发光的手放在熟睡男孩的额头上，一旁的男人合掌祈祷"),
     sections: [
       {
         title: "是什么",
@@ -192,7 +208,13 @@ const deep: Entry[] = [
       {
         title: "条件与限制",
         blocks: [
-          U("神祇是否会因牧师违背教义而收回神力，SRD 5.1 没有统一规则；不同战役设定的处理方式不同，待核实。"),
+          S("SRD 5.1 与 2024 版免费规则的牧师章节，都没有写神祇因牧师违背教义而收回神力的规则。", ["srd51", "第 15–17 页"], ["fr2024", "Cleric 职业介绍与特性"]),
+        ],
+      },
+      {
+        title: "版本差异",
+        blocks: [
+          S("2024 版把牧师的力量来源写得更宽：祝福可以来自一位神祇、一个神系，或其他不朽存在，牧师借此汲取神祇所在的外层位面的神圣魔法。同一段也写明，神庙或神龛的成员并不都是牧师。", ["fr2024", "Cleric 职业介绍"]),
         ],
       },
     ],
@@ -208,6 +230,15 @@ const deep: Entry[] = [
     sources: [
       ["srd51", "第 15–17 页（牧师、生命领域）"],
       ["srd51", "第 60 页（侍僧背景）"],
+      ["fr2024", "Cleric 职业介绍"],
+    ],
+    drafts: [
+      D(
+        "不同战役设定对“神祇收回神力”的处理各不相同。",
+        [],
+        "能说明具体战役设定（如被遗忘的国度）如何处理这一问题的设定书段落。",
+        "目前没有找到可以直接引用的官方免费资料，这个概括说法暂不发布。",
+      ),
     ],
     related: ["paladin", "acolyte", "celestials", "oath", "soul-death"],
     themes: ["faith", "death"],
@@ -320,7 +351,7 @@ const deep: Entry[] = [
       {
         title: "是什么",
         blocks: [
-          E("本站把“契约”作为概念条目，汇总规则文本中出现的几类约定：邪术师与恩主的交易、以魔法强制的服从，以及设定中魔鬼对契约的偏好。三者的约束力来源不同，不宜混为一谈。"),
+          E("规则文本中的“契约”有两类：邪术师与恩主之间的交易，以及以魔法强制的服从。两者的约束力来源不同，不宜混为一谈。"),
         ],
       },
       {
@@ -336,14 +367,18 @@ const deep: Entry[] = [
         title: "契约条件",
         blocks: [
           S("SRD 5.1 中所有魔鬼数据块的阵营都是守序邪恶。", ["srd51", "第 274–278 页"]),
-          U("“魔鬼重视契约、以合约换取凡人灵魂”是 D&D 中广为人知的形象，主要见于 Monster Manual（2014）魔鬼条目等非开放书目；SRD 5.1 没有相应描述，具体表述待核实。", ["mm2014", "魔鬼条目，页码待核实"]),
           E("规则文本很少写明契约条款。一份契约在叙事上通常包括：双方是谁、交换什么、期限、违约后果，以及谁有权解释条款。"),
         ],
       },
     ],
-    sources: [
-      ["srd51", "第 46、148、168、274–278 页"],
-      ["mm2014", "魔鬼条目（未核对原文）"],
+    sources: [["srd51", "第 46、148、168、274–278 页"]],
+    drafts: [
+      D(
+        "魔鬼重视契约，以合约换取凡人的灵魂。",
+        [["mm2014", "魔鬼条目"]],
+        "Monster Manual（2014 或 2024）魔鬼条目的原文与页码，或同等的官方免费资料。",
+        "原书不在开放或官方免费资料中，D&D Beyond 上的对应页面需要购买；目前只找到社区网站的转述。 SRD 5.1 与 SRD 5.2.1 的魔鬼数据都没有这类描述。"
+      ),
     ],
     related: ["warlock", "devils", "oath", "true-name", "soul-death", "nine-hells"],
     themes: ["pact", "power"],
@@ -398,13 +433,13 @@ const deep: Entry[] = [
       {
         title: "是什么",
         blocks: [
-          E("SRD 5.1 没有单独的“灵魂”章节。本条汇总规则文本中涉及灵魂的条目，并把设定书中的说法单独列为待核实。"),
+          E("SRD 5.1 没有单独的“灵魂”章节，灵魂散见于复活、附身、位面与不死生物的规则中。"),
         ],
       },
       {
         title: "规则文本中的灵魂",
         blocks: [
-          S("死者复活（Raise Dead）、转生术（Reincarnate）、复生术（Resurrection）、完全复生术（True Resurrection）与克隆术（Clone）都以死者灵魂“自由且愿意”返回为条件。", ["srd51", "第 125、173–175、189 页"]),
+          S("死者复活（Raise Dead）、转生术（Reincarnate）、复生术（Resurrection）、完全复生术（True Resurrection）与克隆术（Clone）都以死者灵魂“自由且愿意”返回为条件。2024 版的克隆术保留了同样的条件。", ["srd51", "第 125、173–175、189 页"], ["srd521", "第 116 页"]),
           S("魔魂壶（Magic Jar）让施法者的灵魂离开身体进入一个容器，并可尝试占据他人的身体。", ["srd51", "第 160 页"]),
           S("位面附录描述星界（Astral Plane）为思想与梦境之境，旅行者以脱离肉体的灵魂形态经由星界前往神圣与恶魔的位面。", ["srd51", "第 364 页"]),
           S("不死生物是因死灵魔法或邪恶诅咒而进入不死状态的曾经活着的生物，包括吸血鬼、僵尸等行尸，以及幽灵等无形之灵。", ["srd51", "第 255 页"]),
@@ -414,13 +449,20 @@ const deep: Entry[] = [
         title: "条件与限制",
         blocks: [
           E("“自由且愿意”这一条件意味着：灵魂可能不自由（被囚禁、被交易、被束缚），也可能不愿意回来。这两种情况在规则上会让复活失败。"),
-          U("死后灵魂前往其信仰的神祇所在位面等说法属于设定内容，主要见于 Dungeon Master's Guide（2014）等书目，本站未对照原文，待核实。", ["dmg2014", "位面相关章节，页码待核实"]),
         ],
       },
     ],
     sources: [
       ["srd51", "第 125、160、173–175、189、255、364 页"],
-      ["dmg2014", "位面相关章节（未核对原文）"],
+      ["srd521", "第 116 页（克隆术）"],
+    ],
+    drafts: [
+      D(
+        "死者的灵魂会前往其信仰的神祇所在的位面。",
+        [["dmg2014", "位面章节"]],
+        "Dungeon Master's Guide（2014 或 2024）中关于死后去向的原文与页码。",
+        "原书不在开放或官方免费资料中。2014 年 Basic Rules 的位面附录只写到外层位面是神祇的居所，没有写死者的去向。",
+      ),
     ],
     related: ["lich", "shadowfell", "celestials", "cleric", "pact", "devils"],
     themes: ["death", "pact", "faith"],
@@ -432,49 +474,47 @@ const deep: Entry[] = [
     en: "True Name",
     category: "concept",
     depth: "deep",
-    summary: "“掌握真名就能控制对方”不是 D&D 的通用规则。本条是一份核实记录：真名在哪个版本、哪些生物上被提及，哪些已确认、哪些待核实。",
-    edition: "2014（SRD 5.1 已核对；2024 未核对）",
+    summary: "开放规则中，名字只在少数法术里起作用：异界之门要求说出生物的真实名字，化名、头衔或绰号无效。",
+    edition: "2014 · SRD 5.1；2024 · SRD 5.2.1",
     setting: GENERIC,
     image: art("entry-true-name", "50% 50%", "学者跪坐在粉笔法阵中，用放大镜审视卷轴上一行发光的符号"),
     sections: [
       {
-        title: "核实结果",
+        title: "是什么",
         blocks: [
-          E("截至 2026 年 11 月的整理：SRD 5.1 全文没有出现 “true name” 一词；能定位到的 5e 相关文本只涉及恶魔，且来自非开放书目，本站尚未对照原书。真名不应写成适用于所有生物的规则。"),
+          S("异界之门（Gate）施法时可以说出某个特定生物的名字——化名、头衔或绰号无效。若该生物在另一个位面，传送门会在其身边打开并把它拉过来。施法者不会因此获得控制对方的能力。", ["srd51", "第 148 页"]),
+          S("2024 版的异界之门保留了同样的要求。", ["srd521", "第 135 页"]),
+          S("SRD 5.1 与 SRD 5.2.1 全文都没有使用“真名”（true name）这一术语。", ["srd51", "全文"], ["srd521", "全文"]),
         ],
       },
       {
-        title: "SRD 5.1 中的相关规则",
+        title: "解读",
         blocks: [
-          S("异界之门（Gate）施法时可以说出某个特定生物的名字——化名、头衔或绰号无效。若该生物在另一个位面，传送门会在其身边打开并把它拉过来。", ["srd51", "第 148 页"]),
-          E("这条规则要求的是“真实的名字”而非称号，但没有使用“真名”一词，也没有说知道名字就能控制对方。"),
-        ],
-      },
-      {
-        title: "非开放书目中的提及",
-        blocks: [
-          U("据二手资料引述，Monster Manual（2014）恶魔条目有一则侧栏：恶魔领主与 1–6 型恶魔各有一个保密的真名；被魅惑时可能被迫说出；得知真名的凡人可以借强力召唤魔法把恶魔从深渊召来，并在一定程度上控制它。", ["mm2014", "恶魔条目侧栏，约第 53 页（据二手资料）"], ["seTrueName", "问答中的原书引文"]),
-          U("据同一二手资料，Xanathar's Guide to Everything 的召唤高等恶魔（Summon Greater Demon）规定：说出恶魔的真名，会使其维持服从的魅力豁免处于劣势。", ["xgte", "召唤高等恶魔，页码待核实"], ["seTrueName", "问答中的原书引文"]),
-        ],
-      },
-      {
-        title: "适用范围",
-        blocks: [
-          E("已定位的提及只针对恶魔（demon）。魔鬼、妖精、天界生物与凡人的真名，在已核对的资料中没有找到规则依据。"),
-          U("2024 版规则（SRD 5.2.1）中是否有真名相关文本，本站尚未核对，待核实。", ["srd521", "未逐条核对"]),
-          E("在创作中把真名扩展到其他存在，属于原创改编。本站的“收藏到项目”会把这类改动写在“本项目采用/改动”中，与来源内容分开保存。"),
+          E("开放规则只要求“真实的名字”，没有写知道名字就能支配对方。在原创世界里让名字带来控制力，需要作者自行决定适用于哪些存在、代价是什么。"),
         ],
       },
     ],
     sources: [
-      ["srd51", "第 148 页（异界之门）；全文检索无 “true name”"],
-      ["mm2014", "恶魔条目侧栏（未核对原文）"],
-      ["xgte", "召唤高等恶魔（未核对原文）"],
-      ["seTrueName", "二手资料，仅用于定位"],
+      ["srd51", "第 148 页（异界之门）"],
+      ["srd521", "第 135 页（Gate）"],
+    ],
+    drafts: [
+      D(
+        "Monster Manual（2014）恶魔条目有一则侧栏：恶魔领主与 1–6 型恶魔各有一个保密的真名，被魅惑时可能被迫说出；得知真名的凡人可以借强力召唤魔法把恶魔从深渊召来，并在一定程度上控制它。",
+        [["mm2014", "恶魔条目侧栏，社区转述称在第 53 页"], ["seTrueName", "问答中的引文"]],
+        "Monster Manual（2014）第 53 页附近的原文。",
+        "原书不在开放或官方免费资料中，D&D Beyond 上的对应页面需要购买；目前只找到社区网站的转述。",
+      ),
+      D(
+        "Xanathar's Guide to Everything 的召唤高等恶魔（Summon Greater Demon）规定：说出恶魔的真名，会使其维持服从的魅力豁免处于劣势。",
+        [["xgte", "召唤高等恶魔，社区转述称在第 166 页"], ["seTrueName", "问答中的引文"]],
+        "Xanathar's Guide to Everything 第 166 页附近的原文。",
+        "原书不在开放或官方免费资料中；该法术不在 SRD 5.1 或 SRD 5.2.1 中。",
+      ),
     ],
     related: ["demons", "devils", "pact", "warlock", "wizard"],
     themes: ["secrets", "power", "pact"],
-    tags: ["名字", "控制", "召唤", "秘密", "核实案例"],
+    tags: ["名字", "召唤", "异界之门"],
   },
   {
     slug: "devils",
@@ -482,7 +522,7 @@ const deep: Entry[] = [
     en: "Devils",
     category: "creature",
     depth: "deep",
-    summary: "原生于下层位面、阵营守序邪恶的邪魔。SRD 给出了它们的数据与阵营；“精于契约”的形象主要来自非开放书目。",
+    summary: "原生于下层位面、阵营守序邪恶的邪魔，与九层地狱紧密绑定。2024 版规则中，许多魔鬼在九层地狱以外死去后会在地狱重生。",
     edition: SRD14,
     setting: GENERIC,
     image: art("entry-devil", "55% 28%", "炼狱档案厅里，红皮肤长角的魔鬼在铁讲台前阅读账册，小魔鬼书记在旁执笔"),
@@ -498,20 +538,28 @@ const deep: Entry[] = [
         title: "力量来源与限制",
         blocks: [
           S("劣魔若死在九层地狱，会在 1d10 天后复活，除非被善良阵营生物以祝福术处理，或其遗骸被洒上圣水。", ["srd51", "第 278 页"]),
-          E("这条规则说明魔鬼与九层地狱这一位面紧密绑定：在本位面被消灭，并不等于真正的终结。"),
+          S("2024 版扩大了这种绑定：胡须魔等多种魔鬼带有“魔鬼复原”（Diabolical Restoration）特性，在九层地狱以外死去时，身体化为硫磺烟雾，随即在九层地狱某处获得新身体并恢复全部生命。", ["srd521", "第 262 页等"]),
+          E("对魔鬼来说，在凡间被击败并不等于终结；真正的威胁需要到九层地狱去解决。"),
         ],
       },
       {
         title: "社会与组织",
         blocks: [
           S("邪术师邪魔恩主一节把 Asmodeus、Dispater、Mephistopheles、Belial 列为大魔鬼的例子。", ["srd51", "第 50 页"]),
-          U("九层地狱森严的等级与晋升、魔鬼以契约收集灵魂等设定，主要来自 Monster Manual（2014）等书目，本站未转载，待核实具体表述。", ["mm2014", "魔鬼条目，页码待核实"]),
         ],
       },
     ],
     sources: [
       ["srd51", "第 50、59、254、274–278 页"],
-      ["mm2014", "魔鬼条目（未核对原文）"],
+      ["srd521", "第 262 页（胡须魔：魔鬼复原）"],
+    ],
+    drafts: [
+      D(
+        "九层地狱有森严的等级与晋升制度，魔鬼以契约收集凡人灵魂。",
+        [["mm2014", "魔鬼条目"]],
+        "Monster Manual（2014 或 2024）魔鬼条目的原文与页码。",
+        "原书不在开放或官方免费资料中，D&D Beyond 上的对应页面需要购买；目前只找到社区网站的转述。",
+      ),
     ],
     related: ["nine-hells", "pact", "warlock", "demons", "true-name"],
     themes: ["pact", "power"],
@@ -523,7 +571,7 @@ const deep: Entry[] = [
     en: "Demons",
     category: "creature",
     depth: "deep",
-    summary: "与魔鬼同属邪魔，但阵营为混乱邪恶，来自深渊。已定位的“真名”提及只针对恶魔。",
+    summary: "与魔鬼同属邪魔，但阵营为混乱邪恶，与深渊相关联。",
     edition: SRD14,
     setting: GENERIC,
     sections: [
@@ -537,17 +585,18 @@ const deep: Entry[] = [
       {
         title: "与魔鬼的区别",
         blocks: [
-          E("魔鬼守序、恶魔混乱。对创作来说，这意味着与魔鬼的关系更像交易与等级，与恶魔的关系更像失控与吞噬。这是编辑归纳，不是规则原文。"),
+          E("魔鬼守序、恶魔混乱。对创作来说，这意味着与魔鬼的关系更像交易与等级，与恶魔的关系更像失控与吞噬。"),
         ],
       },
-      {
-        title: "真名",
-        blocks: [U("恶魔拥有保密真名的说法来自 Monster Manual（2014），本站只经二手资料定位，详见“真名”核实条目。", ["mm2014", "恶魔条目侧栏（未核对原文）"])],
-      },
     ],
-    sources: [
-      ["srd51", "第 254、270–274 页"],
-      ["mm2014", "恶魔条目（未核对原文）"],
+    sources: [["srd51", "第 254、270–274 页"]],
+    drafts: [
+      D(
+        "恶魔领主与 1–6 型恶魔各有一个保密的真名。",
+        [["mm2014", "恶魔条目侧栏"], ["seTrueName", "问答中的引文"]],
+        "Monster Manual（2014）恶魔条目侧栏的原文。",
+        "原书不在开放或官方免费资料中，D&D Beyond 上的对应页面需要购买；目前只找到社区网站的转述。",
+      ),
     ],
     related: ["devils", "true-name", "warlock"],
     themes: ["power", "secrets"],
@@ -589,7 +638,7 @@ const deep: Entry[] = [
     en: "Lich",
     category: "creature",
     depth: "deep",
-    summary: "以命匣维系存在的强大不死施法者。命匣把巫妖的弱点变成了一个可以被藏匿、守护或夺取的物件。",
+    summary: "把灵魂困在命匣中以求不朽的强大不死施法者。命匣把巫妖的弱点变成了一个可以被藏匿、守护或夺取的物件。",
     edition: SRD14,
     setting: GENERIC,
     image: art("entry-lich", "40% 35%", "地下墓室的石座上，戴王冠的骷髅巫妖举起一只发出青光的银质圣物匣"),
@@ -605,14 +654,24 @@ const deep: Entry[] = [
         title: "力量来源与限制",
         blocks: [
           S("“复生”（Rejuvenation）特性：若巫妖拥有命匣（phylactery），被摧毁后会在 1d10 天内获得新躯体并恢复全部生命，新躯体出现在命匣 5 尺之内。", ["srd51", "第 325 页"]),
-          E("规则只写了命匣带来的复生，没有写命匣如何制作或摧毁。对叙事而言，命匣的所在地就是巫妖的秘密。"),
-          U("巫妖通过仪式把灵魂寄存于命匣、需要以灵魂供养命匣等设定，见 Monster Manual（2014）巫妖条目，本站未对照原文，待核实。", ["mm2014", "巫妖条目，页码待核实"]),
+          S("2024 版（SRD 5.2.1）改用“灵魂罐”（Spirit Jar）：若巫妖拥有灵魂罐，被摧毁后会在 1d10 天内重组并恢复全部生命，新躯体出现在巫妖的巢穴中，而不是容器旁边。", ["srd521", "第 304 页"]),
+          S("D&D Beyond 的官方文章介绍：巫妖把自己的灵魂困在命匣中而获得不朽，灵魂因此被束缚在凡世，不会死去；维持命匣需要以灵魂供养，否则巫妖的不死状态会开始动摇。只剩一颗头骨的“半巫妖”（demilich）就是未能供养足够灵魂的结果。", ["ddbLich", "The Lich Lying in Wait"]),
+          E("对叙事而言，命匣的所在地就是巫妖最大的秘密，而供养命匣的需要让巫妖不得不持续行动。"),
         ],
       },
     ],
     sources: [
       ["srd51", "第 255、324–325 页"],
-      ["mm2014", "巫妖条目（未核对原文）"],
+      ["srd521", "第 304 页（Lich）"],
+      ["ddbLich", "The Lich Lying in Wait"],
+    ],
+    drafts: [
+      D(
+        "成为巫妖的仪式包括预先制作命匣，并饮下以有感知生物的鲜血调制的转化药剂。",
+        [["mm2014", "巫妖条目，社区转述称在第 202–203 页"]],
+        "Monster Manual（2014）巫妖条目的原文与页码。",
+        "原书不在开放或官方免费资料中，D&D Beyond 上的对应页面需要购买；目前只找到社区网站的转述。",
+      ),
     ],
     related: ["soul-death", "wizard", "shadowfell"],
     themes: ["death", "secrets"],
@@ -641,13 +700,21 @@ const deep: Entry[] = [
         title: "条件与限制",
         blocks: [
           S("劣魔死在九层地狱会复活，除非满足特定条件。", ["srd51", "第 278 页"]),
-          U("九层地狱为守序邪恶的外层位面、各层领主与 Asmodeus 的统治等详细设定，见 Dungeon Master's Guide（2014）等书目，本站未对照原文，待核实。", ["dmg2014", "外层位面章节，页码待核实"]),
+          S("2024 版中，胡须魔等多种魔鬼在九层地狱以外死去后，会在九层地狱某处获得新身体。", ["srd521", "第 262 页等"]),
         ],
       },
     ],
     sources: [
       ["srd51", "第 169、278、364 页"],
-      ["dmg2014", "外层位面章节（未核对原文）"],
+      ["srd521", "第 262 页（胡须魔：魔鬼复原）"],
+    ],
+    drafts: [
+      D(
+        "九层地狱是守序邪恶的外层位面，各层有各自的领主，由 Asmodeus 统治。",
+        [["dmg2014", "外层位面章节"]],
+        "Dungeon Master's Guide（2014 或 2024）外层位面章节的原文与页码。",
+        "原书不在开放或官方免费资料中。SRD 5.1 只把 Asmodeus 列为大魔鬼的例子（第 50 页），没有写他统治九层地狱。",
+      ),
     ],
     related: ["devils", "pact", "warlock", "outer-planes"],
     themes: ["pact", "power"],
@@ -659,7 +726,7 @@ const deep: Entry[] = [
     en: "Shadowfell",
     category: "plane",
     depth: "deep",
-    summary: "与不死生物和阴影物质相关的位面。SRD 只在法术中提及它，详细面貌来自非开放书目。",
+    summary: "与不死生物和阴影物质相关的位面。第五版开放规则只在法术中提及它；第四版官方资料把它描写为物质世界黑暗的倒影。",
     edition: SRD14,
     setting: GENERIC,
     image: art("entry-shadowfell", "35% 50%", "灰暗无日的荒原上，提灯的旅人站在山坡回望枯林与灰色城堡废墟"),
@@ -673,15 +740,24 @@ const deep: Entry[] = [
         ],
       },
       {
-        title: "待核实",
+        title: "版本差异",
         blocks: [
-          U("堕影冥界作为物质位面的阴暗回响、令人消沉的环境等描述，见 Dungeon Master's Guide（2014）位面章节，本站未对照原文，待核实。", ["dmg2014", "位面章节，页码待核实"]),
+          S("第四版的官方预览文章把堕影冥界描写为物质世界黑暗而不完美的倒影：阴影与忧郁取代了光明与希望，恐惧与孤立让生物想要向命运屈服；亡魂在荒凉的大地上飘荡，有时被困或受折磨。", ["wotc4eShadowfell", "A Dark Mirror"]),
+          E("这是第四版的描写，第五版开放规则中没有对应文字。在原创世界中采用这一形象时，应当作为改编记录。"),
         ],
       },
     ],
     sources: [
       ["srd51", "第 132、136、146 页"],
-      ["dmg2014", "位面章节（未核对原文）"],
+      ["wotc4eShadowfell", "A Dark Mirror"],
+    ],
+    drafts: [
+      D(
+        "第五版 Dungeon Master's Guide（2014）把堕影冥界描述为物质位面的阴暗回响，环境令人消沉。",
+        [["dmg2014", "位面章节"]],
+        "Dungeon Master's Guide（2014）位面章节的原文与页码。",
+        "原书不在开放或官方免费资料中；2014 年 Basic Rules 的位面附录没有提到堕影冥界。",
+      ),
     ],
     related: ["soul-death", "lich", "outer-planes"],
     themes: ["death"],
@@ -801,7 +877,7 @@ const deep: Entry[] = [
         blocks: [
           S("被遗忘的国度是 D&D 历史最悠久的设定之一，涵盖费伦（Faerûn）这片有繁忙商路与危险边疆的魔法世界。官方站点推荐以免费冒险 Lost Mine of Phandelver 入门，其舞台剑湾（Sword Coast）有深水城（Waterdeep）、无冬城（Neverwinter）、博德之门（Baldur's Gate）等城市。", ["realmsResource", "全文"]),
           S("第五版设定书 Sword Coast Adventurer's Guide 的序言说明，该书概述费伦与托瑞尔（Toril）世界，并重点介绍剑湾与北地（the North）。", ["scagPreface", "序言"]),
-          E("本站其他条目默认不限定世界观；标注了“被遗忘的国度”的条目只在这一设定中成立。把这些势力移入原创世界时，应在项目里记为改编。"),
+          E("标注了“被遗忘的国度”的条目只在这一设定中成立。把这些势力移入原创世界时，应作为改编记录。"),
         ],
       },
     ],
@@ -848,6 +924,12 @@ const deep: Entry[] = [
     tags: ["神庙", "教阶", "信众"],
   },
 ];
+
+const deep: Entry[] = deepRaw.map((e) =>
+  e.edition === SRD14 && e.sources.some(([id]) => id === "srd521" || id === "fr2024")
+    ? { ...e, edition: "2014 · SRD 5.1，并注明 2024 版差异" }
+    : e,
+);
 
 // Short original summaries for SRD classes without a deep entry. Mechanics come from the SRD data snapshot.
 const classNotes: Record<string, { summary: string; power: string; subclass: string; page: string }> = {
@@ -900,7 +982,7 @@ const catalogClasses: Entry[] = (classes as unknown as ClassRow[])
       edition: SRD14,
       setting: GENERIC,
       sections: n
-        ? [{ title: "力量来源", blocks: [S(n.power, ["srd51", n.page]), E("本条目前只有简要整理，深入的组织、传统与社会关系内容尚未编写。")] }]
+        ? [{ title: "力量来源", blocks: [S(n.power, ["srd51", n.page])] }]
         : [],
       rules: {
         items: [
@@ -927,7 +1009,7 @@ const catalogRaces: Entry[] = (races as unknown as RaceRow[]).map((r) => ({
   summary: raceNotes[r.index] ?? "SRD 5.1 收录的种族。",
   edition: SRD14,
   setting: GENERIC,
-  sections: [{ title: "是什么", blocks: [E(raceNotes[r.index] ?? ""), E("本条目前只有简要整理，文化、社会与历史内容尚未编写。")] }],
+  sections: [{ title: "是什么", blocks: [E(raceNotes[r.index] ?? "")] }],
   rules: { items: [["种族特性", raceTraits[r.index] ?? "见 SRD"]], cite: [["srd51", "第 3–7 页"], ["data5ebits", "Races.json"]] },
   sources: [["srd51", "第 3–7 页（种族）"], ["data5ebits", "Races.json"]],
   related: r.index === "tiefling" ? ["devils", "nine-hells"] : [],

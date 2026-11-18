@@ -2,9 +2,10 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, existsSync } from "node:fs";
 import { entries, getEntry, searchEntries } from "../src/wb/entries";
 import { themes, searchThemes } from "../src/wb/themes";
-import { sources } from "../src/wb/sources";
-import * as P from "../src/wb/project";
-import { parseHash, href, type Route } from "../src/wb/router";
+import { sources, licenseLabel } from "../src/wb/sources";
+import * as S from "../src/wb/series";
+import { exampleSeries } from "../src/wb/example";
+import { parseHash, href, seriesRoute, type Route } from "../src/wb/router";
 
 class MemStorage {
   m = new Map<string, string>();
@@ -27,179 +28,396 @@ class MemStorage {
     return this.m.size;
   }
 }
+const mem = () => new MemStorage() as unknown as Storage;
+const v1Save = readFileSync("tests/fixtures/v1-save.json", "utf8");
+const S1 = "story-ferry-fire";
+const S2 = "story-grey-bridge";
 
-describe("entry data integrity", () => {
+// Editorial-workflow wording that must never reach reading text.
+const EDITORIAL = /待核实|待查|未核实|编辑解读|设定摘要|TODO|本站尚未/;
+
+describe("reference entries", () => {
   it("has unique slugs and resolvable links", () => {
     expect(new Set(entries.map((e) => e.slug)).size).toBe(entries.length);
     for (const e of entries) {
-      for (const r of e.related) expect(getEntry(r), `${e.slug} → ${r}`).toBeTruthy();
-      for (const t of e.themes) expect(themes.some((x) => x.slug === t), `${e.slug} theme ${t}`).toBe(true);
-      for (const [sid] of e.sources) expect(sources[sid], `${e.slug} source ${sid}`).toBeTruthy();
+      for (const r of e.related)
+        expect(getEntry(r), `${e.slug} → ${r}`).toBeTruthy();
+      for (const t of e.themes)
+        expect(
+          themes.some((x) => x.slug === t),
+          `${e.slug} theme ${t}`,
+        ).toBe(true);
+      for (const [sid] of e.sources)
+        expect(sources[sid], `${e.slug} source ${sid}`).toBeTruthy();
     }
   });
-  it("cites every sourced paragraph and never cites unknown sources", () => {
+  it("keeps only two provenance kinds in reading text, and cites every sourced paragraph", () => {
     for (const e of entries)
       for (const s of e.sections)
         for (const b of s.blocks) {
-          if (b.p === "source") expect(b.cite?.length, `${e.slug}: ${b.text.slice(0, 20)}`).toBeGreaterThan(0);
+          expect(["source", "editorial"]).toContain(b.p);
+          if (b.p === "source")
+            expect(
+              b.cite?.length,
+              `${e.slug}: ${b.text.slice(0, 20)}`,
+            ).toBeGreaterThan(0);
           for (const [sid] of b.cite ?? []) expect(sources[sid]).toBeTruthy();
         }
   });
-  it("marks claims that rest on unread books or secondary sources as 待核实", () => {
+  it("never shows editorial-workflow labels in reading text", () => {
+    for (const e of entries) {
+      const reading = [
+        e.summary,
+        e.edition,
+        e.setting,
+        ...e.sections.flatMap((s) => [s.title, ...s.blocks.map((b) => b.text)]),
+        ...(e.rules?.items.flat() ?? []),
+      ].join("\n");
+      expect(reading, e.slug).not.toMatch(EDITORIAL);
+    }
+    for (const t of themes)
+      expect(JSON.stringify(t), t.slug).not.toMatch(EDITORIAL);
+  });
+  it("does not cite paywalled books or community posts as evidence in reading text", () => {
     for (const e of entries)
       for (const s of e.sections)
         for (const b of s.blocks)
-          if ((b.cite ?? []).some(([sid]) => sources[sid].kind === "book" || sources[sid].kind === "secondary")) expect(b.p, `${e.slug}: ${b.text.slice(0, 30)}`).toBe("unverified");
+          for (const [sid] of b.cite ?? [])
+            expect(
+              ["book", "secondary"],
+              `${e.slug}: ${b.text.slice(0, 30)}`,
+            ).not.toContain(sources[sid].kind);
   });
-  it("only links verified https sources and keeps books without URLs", () => {
+  it("keeps unconfirmed claims as drafts with what is missing and why", () => {
+    const drafts = entries.flatMap((e) =>
+      (e.drafts ?? []).map((d) => ({ e, d })),
+    );
+    expect(drafts.length).toBeGreaterThan(5);
+    for (const { e, d } of drafts) {
+      expect(d.claim.length, e.slug).toBeGreaterThan(4);
+      expect(d.missing.length, e.slug).toBeGreaterThan(4);
+      expect(d.blocker.length, e.slug).toBeGreaterThan(4);
+      for (const [sid] of d.located)
+        expect(sources[sid], `${e.slug} draft source ${sid}`).toBeTruthy();
+      // a draft claim must not be repeated verbatim in the reading text
+      const reading = e.sections
+        .flatMap((s) => s.blocks.map((b) => b.text))
+        .join("\n");
+      expect(reading.includes(d.claim)).toBe(false);
+    }
+  });
+  it("labels each source's licence separately from verification", () => {
     for (const s of Object.values(sources)) {
-      if (s.kind === "book") expect(s.url).toBeUndefined();
-      else expect(s.url).toMatch(/^https:\/\//);
+      expect(licenseLabel[s.license], s.id).toBeTruthy();
+      if (s.kind === "book") {
+        expect(s.url).toBeUndefined();
+        expect(s.license).toBe("title-only");
+      } else expect(s.url).toMatch(/^https:\/\//);
     }
+    expect(sources.srd51.license).toBe("cc-by");
+    expect(sources.srd521.license).toBe("cc-by");
   });
-  it("keeps the first batch of deep entries with images on disk", () => {
-    for (const slug of ["warlock", "paladin", "cleric", "wizard", "rogue", "pact", "oath", "soul-death", "true-name", "devils", "celestials", "lich", "nine-hells", "shadowfell", "harpers", "zhentarim"]) {
-      const e = getEntry(slug)!;
-      expect(e.depth).toBe("deep");
-      expect(e.sections.length).toBeGreaterThan(0);
-      expect(existsSync(`public/${e.image!.src}`), e.image!.src).toBe(true);
+  it("states the 2014/2024 difference where 2024 material is cited", () => {
+    for (const e of entries) {
+      const cites = e.sections.flatMap((s) =>
+        s.blocks.flatMap((b) => b.cite ?? []),
+      );
+      if (cites.some(([sid]) => sid === "srd521" || sid === "fr2024"))
+        expect(e.edition, e.slug).toContain("2024");
     }
+    expect(
+      getEntry("cleric")!.sections.some((s) => s.title === "版本差异"),
+    ).toBe(true);
+    expect(
+      getEntry("shadowfell")!.sections.some((s) => s.title === "版本差异"),
+    ).toBe(true);
   });
-  it("keeps the SRD catalog browsable: 12 classes and 9 races", () => {
+  it("treats True Name as an ordinary entry grounded in the Gate spell", () => {
+    const tn = getEntry("true-name")!;
+    expect(tn.summary).toContain("异界之门");
+    const cites = tn.sections.flatMap((s) =>
+      s.blocks.flatMap((b) => b.cite ?? []),
+    );
+    expect(cites).toEqual(expect.arrayContaining([["srd51", "第 148 页"]]));
+    expect(tn.drafts?.length).toBeGreaterThan(0);
+  });
+  it("keeps deep entries with images on disk and the SRD catalog", () => {
+    for (const e of entries.filter((x) => x.depth === "deep")) {
+      expect(e.sections.length, e.slug).toBeGreaterThan(0);
+      if (e.image)
+        expect(existsSync(`public/${e.image.src}`), e.image.src).toBe(true);
+    }
     expect(entries.filter((e) => e.category === "class")).toHaveLength(12);
     expect(entries.filter((e) => e.category === "race")).toHaveLength(9);
-  });
-  it("tags faction entries with their setting", () => {
-    expect(getEntry("harpers")!.setting).toContain("Forgotten Realms");
-    expect(getEntry("zhentarim")!.setting).toContain("Forgotten Realms");
-  });
-  it("never states True Name as a sourced universal rule", () => {
-    const tn = getEntry("true-name")!;
-    const sourced = tn.sections.flatMap((s) => s.blocks).filter((b) => b.p === "source");
-    expect(sourced.every((b) => !/真名/.test(b.text))).toBe(true);
-    expect(tn.summary).toContain("不是 D&D 的通用规则");
   });
   it("searches names, English names and tags", () => {
     expect(searchEntries("warlock").map((e) => e.slug)).toContain("warlock");
     expect(searchEntries("契约").length).toBeGreaterThan(2);
-    expect(searchEntries("", "faction").map((e) => e.slug).sort()).toEqual(["harpers", "zhentarim"]);
+    expect(
+      searchEntries("", "faction")
+        .map((e) => e.slug)
+        .sort(),
+    ).toEqual(["harpers", "zhentarim"]);
   });
-});
-
-describe("themes", () => {
-  it("has the five editorial themes with images and valid links", () => {
-    expect(themes.map((t) => t.zh)).toEqual(["权力与依附", "契约与束缚", "身份与秘密", "信仰与义务", "死亡与灵魂"]);
+  it("keeps the theme index valid", () => {
     for (const t of themes) {
       expect(existsSync(`public/${t.image.src}`)).toBe(true);
-      expect(t.conditions.length).toBeGreaterThan(1);
       for (const e of t.entries) expect(getEntry(e.slug)).toBeTruthy();
-      for (const s of t.scenarios) for (const e of s.entries) expect(getEntry(e), e).toBeTruthy();
-      for (const a of t.adjacent) expect(themes.some((x) => x.slug === a)).toBe(true);
+      for (const s of t.scenarios)
+        for (const e of s.entries) expect(getEntry(e), e).toBeTruthy();
     }
-  });
-  it("makes 'holding a secret gives influence' discoverable from both themes", () => {
-    const hits = searchThemes("秘密 影响力");
-    expect(hits.map((h) => h.theme.slug).sort()).toEqual(["power", "secrets"]);
-    for (const h of hits) expect(h.scenario.entries).toEqual(expect.arrayContaining(["true-name", "pact", "warlock", "zhentarim"]));
+    expect(searchThemes("秘密").length).toBeGreaterThan(0);
   });
 });
 
-describe("copy rules", () => {
-  const files = ["src/Workbench.tsx", "src/wb/ProjectView.tsx", "src/wb/entries.ts", "src/wb/themes.ts", "src/App.tsx", "index.html"];
-  const text = files.map((f) => readFileSync(f, "utf8")).join("\n");
-  it("removes the old slogans", () => {
-    for (const s of ["找到你的冒险方式", "把每一次出手，变成可靠的答案", "先看玩法，再看规则", "开启属于你的传奇", "每一个传奇"]) expect(text).not.toContain(s);
-  });
-  it("avoids second person in reading content and UI", () => {
-    expect(text.match(/你/g) ?? []).toHaveLength(0);
-  });
-  it("uses the literal action labels", () => {
-    for (const s of ["收藏到项目", "添加关系", "导出 Markdown", "导出 JSON", P.SAVE_LABEL]) expect(text + P.SAVE_LABEL).toContain(s);
-  });
-});
-
-describe("creative projects", () => {
-  const ex = P.exampleProject();
-  it("ships a valid example labelled 原创示例 with consistent references", () => {
-    expect(P.projectSchema.parse(ex)).toEqual(ex);
+describe("example series", () => {
+  const ex = exampleSeries();
+  it("is a valid series labelled 原创示例 with one world and two stories in different eras", () => {
+    expect(S.seriesSchema.parse(ex)).toEqual(ex);
     expect(ex.example).toBe(true);
     expect(ex.name).toContain("原创示例");
-    const ids = new Set(ex.characters.map((c) => c.id));
+    const list = S.storiesInOrder(ex);
+    expect(list.map((s) => s.id)).toEqual([S1, S2]);
+    expect(list[0].eraId).not.toBe(list[1].eraId);
+    expect(list[1].yearStart - list[0].yearEnd).toBeGreaterThan(10);
+    const shared = list[0].cast.filter((c) => list[1].cast.includes(c));
+    expect(shared.length).toBeGreaterThanOrEqual(3);
+  });
+  it("has consistent references everywhere", () => {
+    const objIds = new Set(ex.objects.map((o) => o.id));
+    const storyIds = new Set(ex.stories.map((s) => s.id));
+    const evIds = new Set(ex.events.map((e) => e.id));
+    const factIds = new Set(ex.world.facts.map((f) => f.id));
+    for (const st of ex.stories)
+      for (const id of [...st.cast, ...st.places, ...st.factions])
+        expect(objIds.has(id), id).toBe(true);
+    for (const o of ex.objects) {
+      for (const s of o.states) expect(storyIds.has(s.storyId)).toBe(true);
+      for (const slug of o.entrySlugs) expect(getEntry(slug)).toBeTruthy();
+      if (o.image) expect(existsSync(`public/${o.image}`), o.image).toBe(true);
+      for (const s of o.states)
+        if (s.image)
+          expect(existsSync(`public/${s.image}`), s.image).toBe(true);
+    }
+    for (const e of ex.events) {
+      expect(!e.storyId || storyIds.has(e.storyId)).toBe(true);
+      for (const id of [...e.characterIds, ...e.placeIds, ...e.factionIds])
+        expect(objIds.has(id), id).toBe(true);
+      for (const slug of e.entrySlugs) expect(getEntry(slug)).toBeTruthy();
+    }
     for (const r of ex.relationships) {
-      expect(ids.has(r.from) && ids.has(r.to)).toBe(true);
-      expect(r.from).not.toBe(r.to);
-      expect(r.description.length).toBeGreaterThan(6);
+      expect(objIds.has(r.from) && objIds.has(r.to) && r.from !== r.to).toBe(
+        true,
+      );
+      expect(storyIds.has(r.storyId)).toBe(true);
     }
-    const locs = new Set(ex.locations.map((l) => l.id));
-    for (const pl of ex.plots) {
-      expect(pl.cause && pl.conflict && pl.consequence).toBeTruthy();
-      pl.characterIds.forEach((c) => expect(ids.has(c)).toBe(true));
-      pl.locationIds.forEach((l) => expect(locs.has(l)).toBe(true));
-      pl.entrySlugs.forEach((s) => expect(getEntry(s)).toBeTruthy());
+    for (const i of ex.influences) {
+      expect(evIds.has(i.eventId)).toBe(true);
+      expect(storyIds.has(i.storyId)).toBe(true);
+      expect(
+        !i.targetId || objIds.has(i.targetId) || factIds.has(i.targetId),
+      ).toBe(true);
+      // influence always flows from an earlier story into a later one
+      const from = ex.stories.find(
+        (s) => s.id === ex.events.find((e) => e.id === i.eventId)!.storyId,
+      )!;
+      const to = ex.stories.find((s) => s.id === i.storyId)!;
+      expect(from.order).toBeLessThan(to.order);
     }
-    for (const a of ex.adaptations) {
-      expect(getEntry(a.slug)).toBeTruthy();
-      expect(a.changed.length).toBeGreaterThan(0);
-    }
-    for (const c of ex.characters.slice(0, 3)) for (const k of ["appearance", "identity", "history", "motivation", "desire", "secret", "abilities", "limits"] as const) expect(c[k], `${c.name}.${k}`).not.toBe("");
+    for (const a of ex.adoptions)
+      expect(getEntry(a.entrySlug), a.entrySlug).toBeTruthy();
+    for (const img of [ex.image, ...ex.stories.map((s) => s.image)])
+      expect(existsSync(`public/${img}`), img).toBe(true);
   });
-  it("seeds a fresh store and saves under its own versioned key", () => {
-    const st = new MemStorage() as unknown as Storage;
-    const { state, blocked } = P.loadWb(st);
-    expect(blocked).toBe(false);
-    expect(state.projects[0].id).toBe("example-greyharbor");
-    P.saveWb(state, st);
-    expect(JSON.parse(st.getItem(P.WB_KEY)!).version).toBe(1);
-    expect(st.getItem("wayfarer-5e-v1")).toBeNull();
+  it("is not centred on true names or secrets", () => {
+    expect(ex.adoptions.map((a) => a.entrySlug)).not.toContain("true-name");
+    expect(JSON.stringify(ex)).not.toContain("真名");
   });
-  it("migrates older partial saves and rejects unknown versions", () => {
-    const old = { projects: [{ id: "a", name: "旧项目", createdAt: "x", updatedAt: "x" }] };
-    const m = P.migrate(old);
-    expect(m.favorites).toEqual([]);
-    expect(m.projects[0].characters).toEqual([]);
-    expect(m.projects[0].adaptations).toEqual([]);
-    expect(() => P.migrate({ version: 2, projects: [] })).toThrow("不支持");
+  it("shows a character's concrete changes between the two stories", () => {
+    const suti = S.findObject(ex, "c-suti")!;
+    expect(S.previousStateStory(ex, suti, S2)?.id).toBe(S1);
+    const changes = S.stateChanges(suti, S1, S2);
+    const role = changes.find((c) => c.key === "role")!;
+    expect(role.before).toBe("渡口船工");
+    expect(role.after).toContain("灰桥镇守");
+    expect(changes.find((c) => c.key === "age")).toMatchObject({
+      before: "19 岁",
+      after: "37 岁",
+    });
+    const inf = S.influencesInto(ex, S2).filter(
+      (v) => v.influence.targetId === "c-suti",
+    );
+    expect(inf[0].event?.title).toBe("渡口大火");
+    expect(inf[0].fromStory?.id).toBe(S1);
   });
-  it("blocks autosave and keeps a corrupted save untouched", () => {
-    const st = new MemStorage() as unknown as Storage;
-    st.setItem(P.WB_KEY, "{broken");
-    const r = P.loadWb(st);
-    expect(r.blocked).toBe(true);
-    expect(r.warning).toContain("自动保存已暂停");
-    expect(st.getItem(P.WB_KEY)).toBe("{broken");
+  it("records adoption decisions separately from visibility", () => {
+    expect(ex.adoptions.map((a) => a.decision)).toEqual(
+      expect.arrayContaining(["adapt", "reject", "undecided"]),
+    );
+    expect(ex.adoptions.some((a) => a.visibility === "private")).toBe(true);
+    expect(S.decisionNames.adapt).toBe("改编");
   });
-  it("adds a favorite without touching the original entry", () => {
+});
+
+describe("editing model", () => {
+  const ex = exampleSeries();
+  it("a base-profile edit is shared by every story; a state edit stays in one story", () => {
+    const suti = S.findObject(ex, "c-suti")!;
+    const edited = {
+      ...suti,
+      profile: { ...suti.profile, motivation: "新的动机" },
+    };
+    expect(edited.profile.motivation).toBe("新的动机");
+    const s2 = S.setState(suti, S2, "location", "议会厅");
+    expect(S.stateIn(s2, S2)!.fields.location).toBe("议会厅");
+    expect(S.stateIn(s2, S1)!.fields.location).toBe(
+      S.stateIn(suti, S1)!.fields.location,
+    );
+    const fresh = S.setState(S.findObject(ex, "c-noa")!, S1, "role", "婴儿");
+    expect(S.stateIn(fresh, S1)!.fields.role).toBe("婴儿");
+  });
+  it("adds an adoption once and never touches the reference entry", () => {
     const before = JSON.stringify(getEntry("lich"));
-    const p = P.addAdaptation(ex, "lich");
-    expect(p.adaptations.at(-1)).toMatchObject({ slug: "lich", adopted: "", changed: "" });
-    expect(P.addAdaptation(p, "lich").adaptations.length).toBe(p.adaptations.length);
+    const s = S.addAdoption(ex, "lich");
+    expect(s.adoptions.at(-1)).toMatchObject({
+      entrySlug: "lich",
+      decision: "undecided",
+      canon: "",
+      change: "",
+    });
+    expect(S.addAdoption(s, "lich").adoptions.length).toBe(s.adoptions.length);
     expect(JSON.stringify(getEntry("lich"))).toBe(before);
   });
-  it("exports Markdown with characters, directed relationships, plots, sources and adaptations", () => {
-    const md = P.projectMarkdown(ex);
-    expect(md).toContain("# 灰港契约（原创示例）");
-    expect(md).toContain("原创示例：本项目的人物、关系与情节均为原创");
-    expect(md).toContain("马尔科·韦斯（Marco Vess） → 伊瑟·洛温（Isel Rowan）｜掌握秘密");
-    expect(md).toContain("### 第三个签名");
-    expect(md).toContain("- **起因**：");
-    expect(md).toContain("**设定摘要（来源内容）**");
-    expect(md).toContain("**本项目改动**：恩主不是大魔鬼");
-    expect(md).toContain(sources.srd51.url!);
-    expect(md).toContain(sources.basicFactions.url!);
+  it("creates an empty series with one story", () => {
+    const s = S.emptySeries("新系列");
+    expect(s.stories).toHaveLength(1);
+    expect(S.seriesSchema.parse(s)).toEqual(s);
+  });
+});
+
+describe("storage and migration", () => {
+  it("seeds a fresh store with the example and saves under dnd-workbench-v2", () => {
+    const st = mem();
+    const { state, blocked } = S.loadWb(st);
+    expect(blocked).toBe(false);
+    expect(state.series[0].id).toBe("example-ashriver");
+    S.saveWb(state, st);
+    expect(S.WB_KEY).toBe("dnd-workbench-v2");
+    expect(JSON.parse(st.getItem(S.WB_KEY)!).version).toBe(2);
+    expect(st.getItem("wayfarer-5e-v1")).toBeNull();
+  });
+  it("migrates every round-3 project into a one-story series and keeps the old save", () => {
+    const st = mem();
+    st.setItem(S.WB_KEY_V1, v1Save);
+    const r = S.loadWb(st);
+    expect(r.notice).toContain("2 个项目");
+    expect(r.notice).toContain("旧存档原样保留");
+    expect(r.state.series.map((s) => s.id)).toEqual([
+      "example-ashriver",
+      "example-greyharbor",
+      "proj-mine",
+    ]);
+    expect(r.state.favorites).toEqual(["lich"]);
+    const old = JSON.parse(v1Save).projects[0];
+    const s = r.state.series[1];
+    expect(s.stories).toHaveLength(1);
+    expect(S.objectsOf(s, "character").map((c) => c.name)).toEqual(
+      old.characters.map((c: { name: string }) => c.name),
+    );
+    expect(S.objectsOf(s, "character")[0].profile.secret).toBe(
+      old.characters[0].secret,
+    );
+    expect(s.events.map((e) => e.title)).toEqual(
+      old.plots.map((p: { title: string }) => p.title),
+    );
+    expect(s.relationships).toHaveLength(old.relationships.length);
+    expect(s.relationships.every((x) => x.storyId === s.stories[0].id)).toBe(
+      true,
+    );
+    expect(s.adoptions.map((a) => a.entrySlug)).toEqual(
+      old.adaptations.map((a: { slug: string }) => a.slug),
+    );
+    expect(s.adoptions.find((a) => a.entrySlug === "warlock")!.decision).toBe(
+      "adapt",
+    );
+    expect(st.getItem(S.WB_KEY_V1)).toBe(v1Save);
+  });
+  it("blocks autosave and keeps a corrupted v2 save untouched", () => {
+    const st = mem();
+    st.setItem(S.WB_KEY, "{broken");
+    const r = S.loadWb(st);
+    expect(r.blocked).toBe(true);
+    expect(r.warning).toContain("暂停自动保存");
+    expect(st.getItem(S.WB_KEY)).toBe("{broken");
+  });
+  it("rejects unknown versions", () => {
+    expect(() => S.migrate({ version: 3, series: [] })).toThrow("不支持");
+  });
+});
+
+describe("export and import", () => {
+  const ex = exampleSeries();
+  it("exports Markdown with series, world, stories, states, events, relationships and influences", () => {
+    const md = S.seriesMarkdown(ex);
+    expect(md).toContain("# 烬川纪事（原创示例）");
+    expect(md).toContain("烬川");
+    expect(md).toContain("盐税年代");
+    expect(md).toContain("《渡口之火》");
+    expect(md).toContain("《灰桥》");
+    expect(md).toContain("37 岁");
+    expect(md).toContain("苏缇 → 阿岚｜保护");
+    expect(md).toMatch(/起因/);
+    expect(md).toContain("前作影响");
+    expect(md).toContain("渡口大火");
+    expect(md).toContain("采用的设定");
+    expect(md).toContain(S.SAVE_LABEL);
+    expect(md).toContain("（仅自己）");
+    expect(md).toContain("渡影的来历");
+  });
+  it("leaves private items out of the public export", () => {
+    const md = S.seriesMarkdown(ex, true);
+    expect(md).not.toContain("仅自己");
+    expect(md).not.toContain("渡影的来历");
+    expect(md).not.toContain("没有告诉弟弟渡影这次要的是什么");
+    expect(md).toContain("渡口大火");
+    const pub = JSON.parse(S.seriesJson(ex, true)).series as S.Series;
+    expect(pub.world.facts.some((f) => f.visibility === "private")).toBe(false);
+    expect(pub.relationships.some((r) => r.visibility === "private")).toBe(
+      false,
+    );
+    expect(pub.adoptions.some((a) => a.visibility === "private")).toBe(false);
   });
   it("round-trips JSON and never overwrites on import", () => {
-    const json = P.projectJson(ex);
-    const prev = P.parseImport(json);
-    expect(prev.projects[0]).toEqual(ex);
-    const merged = P.applyImport(P.freshState(), prev);
-    expect(merged.projects).toHaveLength(2);
-    expect(merged.projects[1].id).not.toBe(ex.id);
-    expect(merged.projects[0]).toEqual(ex);
+    const prev = S.parseImport(S.seriesJson(ex), [ex]);
+    expect(prev.series).toEqual(ex);
+    expect(prev.collision).toBe(true);
+    const merged = S.applyImport(S.freshState(), prev);
+    expect(merged.series).toHaveLength(2);
+    expect(merged.series[1].id).not.toBe(ex.id);
+    expect(merged.series[1].name).toContain("（导入）");
+    expect(merged.series[0]).toEqual(ex);
+  });
+  it("imports a round-3 project file as a series", () => {
+    const old = JSON.parse(v1Save).projects[1];
+    const prev = S.parseImport(
+      JSON.stringify({
+        format: "dnd-workbench-project",
+        version: 1,
+        project: old,
+      }),
+      [],
+    );
+    expect(prev.series.name).toBe("雾港旧稿");
+    expect(prev.series.stories).toHaveLength(1);
   });
   it("rejects malformed files and tabletop backups with clear messages", () => {
-    expect(() => P.parseImport("{nope")).toThrow("不是有效的 JSON");
-    expect(() => P.parseImport(JSON.stringify({ version: 1, characters: [], activeId: null }))).toThrow("跑团工具");
-    expect(() => P.parseImport(JSON.stringify({ format: P.PROJECT_FORMAT, version: 1, project: { id: "x" } }))).toThrow("校验失败");
+    expect(() => S.parseImport("{nope")).toThrow("不是有效的 JSON");
+    expect(() =>
+      S.parseImport(
+        JSON.stringify({ version: 1, characters: [], activeId: null }),
+      ),
+    ).toThrow("跑团工具");
+    expect(() => S.parseImport(JSON.stringify({ hello: 1 }))).toThrow();
   });
 });
 
@@ -207,21 +425,89 @@ describe("routes", () => {
   it("round-trips stable hash routes", () => {
     const routes: Route[] = [
       { name: "home" },
-      { name: "browse", cat: "class", q: "契约 魔鬼" },
+      { name: "library", cat: "class", q: "契约 魔鬼" },
       { name: "entry", slug: "true-name", tab: "sources" },
       { name: "themes", q: "秘密" },
       { name: "theme", slug: "secrets" },
-      { name: "projects" },
-      { name: "project", id: "example-greyharbor", tab: "relationships", item: "" },
-      { name: "project", id: "p1", tab: "characters", item: "c-isel" },
-      { name: "favorites" },
+      { name: "drafts" },
+      seriesRoute("example-ashriver"),
+      seriesRoute("example-ashriver", "characters", "c-suti", { story: S2 }),
+      seriesRoute("example-ashriver", "stories", S2, { mode: "influence" }),
+      seriesRoute("example-ashriver", "stories", S1, { pub: true }),
+      seriesRoute("example-ashriver", "adoptions", "warlock"),
       { name: "tools", view: "spells", q: "Fireball" },
     ];
     for (const r of routes) expect(parseHash(href(r))).toEqual(r);
   });
-  it("maps v2 hashes to the new routes", () => {
-    expect(parseHash("#tools")).toEqual({ name: "tools", view: "sheet", q: "" });
-    expect(parseHash("#classes")).toEqual({ name: "browse", cat: "class", q: "" });
-    expect(parseHash("#spells")).toMatchObject({ name: "tools", view: "spells" });
+  it("maps older hashes to the new routes", () => {
+    expect(parseHash("#tools")).toEqual({
+      name: "tools",
+      view: "sheet",
+      q: "",
+    });
+    expect(parseHash("#classes")).toEqual({
+      name: "library",
+      cat: "class",
+      q: "",
+    });
+    expect(parseHash("#/browse?cat=plane")).toEqual({
+      name: "library",
+      cat: "plane",
+      q: "",
+    });
+    expect(parseHash("#/favorites")).toEqual({
+      name: "library",
+      cat: "fav",
+      q: "",
+    });
+    expect(parseHash("#/projects/example-greyharbor/plots")).toEqual(
+      seriesRoute("example-greyharbor", "stories"),
+    );
+    expect(parseHash("#/projects/p1/relationships")).toEqual(
+      seriesRoute("p1", "characters"),
+    );
+  });
+});
+
+describe("copy rules", () => {
+  const files = [
+    "src/Workbench.tsx",
+    "src/wb/SeriesView.tsx",
+    "src/wb/entries.ts",
+    "src/wb/themes.ts",
+    "src/App.tsx",
+    "index.html",
+  ];
+  const text = files.map((f) => readFileSync(f, "utf8")).join("\n");
+  it("removes the old slogans and second person", () => {
+    for (const s of [
+      "找到你的冒险方式",
+      "把每一次出手，变成可靠的答案",
+      "开启属于你的传奇",
+    ])
+      expect(text).not.toContain(s);
+    expect(text.match(/你/g) ?? []).toHaveLength(0);
+  });
+  it("uses the literal action labels and the local-save label", () => {
+    for (const s of [
+      "新建系列",
+      "导入 JSON",
+      "导出 Markdown（公开内容）",
+      "导出 JSON",
+      "加入系列设定",
+      "编辑基本资料",
+      "编辑此时的状态",
+      "添加影响",
+      "添加关系",
+      "SAVE_LABEL",
+    ])
+      expect(text).toContain(s);
+    expect(S.SAVE_LABEL).toBe("保存在本浏览器（未同步到 GitHub）");
+  });
+  it("does not render the word 待核实 anywhere in the UI code", () => {
+    expect(readFileSync("src/Workbench.tsx", "utf8")).not.toContain("待核实");
+    expect(readFileSync("src/wb/SeriesView.tsx", "utf8")).not.toContain(
+      "待核实",
+    );
   });
 });

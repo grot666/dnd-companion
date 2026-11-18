@@ -1,0 +1,430 @@
+{
+  "version": 1,
+  "projects": [
+    {
+      "id": "example-greyharbor",
+      "name": "灰港契约（原创示例）",
+      "summary": "原创示例项目，用于展示角色、关系、情节与设定改编的记录方式。人物、地点、关系与情节均为原创，不是官方设定；引用的设定条目保留原始来源，本项目的改动单独记录。",
+      "example": true,
+      "image": "art/project-greyharbor.webp",
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "updatedAt": "2026-11-18T00:00:00.000Z",
+      "characters": [
+        {
+          "id": "c-isel",
+          "name": "伊瑟·洛温（Isel Rowan）",
+          "appearance": "二十七八岁，深色卷发，常穿旧旅行外套；右手食指有一道细小的灼痕，签约时留下。",
+          "identity": "灰港的抄写员，私下是与魔鬼立约的邪术师。",
+          "history": "三年前弟弟托文染上港口热病，神庙的治疗无效。伊瑟在一份来历不明的契约上签名，弟弟当夜退烧。",
+          "motivation": "保住弟弟的性命，同时不让任何人知道代价。",
+          "desire": "找到解除契约的办法。",
+          "secret": "契约规定她须在五年内为契约方取得另外三人的自愿签名，否则契约方可以索取她的灵魂。",
+          "abilities": "契约魔法；擅长辨认笔迹与伪造文书。",
+          "limits": "契约条款的解释权在契约方手中；她不能主动向他人说出契约内容（本项目原创设定）。",
+          "notes": "",
+          "entrySlugs": [
+            "warlock",
+            "pact",
+            "devils"
+          ],
+          "image": "art/theme-pact.webp"
+        },
+        {
+          "id": "c-marco",
+          "name": "马尔科·韦斯（Marco Vess）",
+          "appearance": "五十岁上下，灰发短须，眼皮沉重，衣领上别着一枚小小的黑铁徽针。",
+          "identity": "港口情报掮客，原创组织“黑铁行会”在灰港的负责人。",
+          "history": "年轻时做过商队护卫，后来发现消息比刀剑值钱。",
+          "motivation": "扩大行会在港口的影响力。",
+          "desire": "拿到神庙账册中记录的走私名单。",
+          "secret": "他知道伊瑟的契约，因为三年前那份契约正是经他的手转交的。",
+          "abilities": "庞大的线人网络；熟悉港口每一条暗巷。",
+          "limits": "行会只认结果；他若失手，会被其他野心家取代。",
+          "notes": "",
+          "entrySlugs": [
+            "zhentarim",
+            "rogue"
+          ],
+          "image": "art/project-broker.webp"
+        },
+        {
+          "id": "c-sera",
+          "name": "塞拉修女（Sister Sera）",
+          "appearance": "灰色法衣，胸前挂着潮汐女神的贝壳圣徽，双手常因熬药而泛黄。",
+          "identity": "潮汐女神礼拜堂的牧师，主持港口的临时病房。",
+          "history": "与伊瑟一起长大。三年前曾亲手照顾托文，至今不明白他为何痊愈。",
+          "motivation": "照顾病人，维护礼拜堂。",
+          "desire": "知道真相，同时不必在信仰与友情之间选择。",
+          "secret": "她已经怀疑伊瑟与邪魔有关，但没有上报教会。",
+          "abilities": "治疗与神术；在港口居民中享有信任。",
+          "limits": "教规要求她上报与邪魔立约的人（本项目原创设定）。",
+          "notes": "",
+          "entrySlugs": [
+            "cleric",
+            "acolyte"
+          ],
+          "image": "art/theme-faith.webp"
+        },
+        {
+          "id": "c-ezrath",
+          "name": "书记官艾兹拉斯（Ezrath）",
+          "appearance": "以高瘦文员的形象出现，长角收在礼帽下，手指过长。",
+          "identity": "下层位面的契约书记官，伊瑟的契约方（原创角色）。",
+          "history": "",
+          "motivation": "收集签名，提升自己在上级眼中的地位。",
+          "desire": "",
+          "secret": "",
+          "abilities": "",
+          "limits": "必须遵守契约的字面条款（本项目原创设定）。",
+          "notes": "原创角色，借用了 SRD 中魔鬼“守序邪恶”的阵营；“书记官”这一身份不是官方设定。",
+          "entrySlugs": [
+            "devils",
+            "nine-hells"
+          ],
+          "image": "art/entry-devil.webp"
+        },
+        {
+          "id": "c-torvin",
+          "name": "托文·洛温（Torvin Rowan）",
+          "appearance": "十九岁，瘦高，码头搬运工。",
+          "identity": "伊瑟的弟弟。",
+          "history": "三年前热病痊愈，不知道原因。",
+          "motivation": "想出海当水手。",
+          "desire": "",
+          "secret": "",
+          "abilities": "",
+          "limits": "",
+          "notes": "",
+          "entrySlugs": []
+        }
+      ],
+      "relationships": [
+        {
+          "id": "r1",
+          "from": "c-marco",
+          "to": "c-isel",
+          "type": "掌握秘密",
+          "description": "马尔科知道伊瑟与魔鬼立约，并以此要求她潜入礼拜堂偷取账册。"
+        },
+        {
+          "id": "r2",
+          "from": "c-isel",
+          "to": "c-torvin",
+          "type": "保护",
+          "description": "伊瑟为救托文签下契约，至今对他隐瞒一切。"
+        },
+        {
+          "id": "r3",
+          "from": "c-isel",
+          "to": "c-ezrath",
+          "type": "亏欠",
+          "description": "伊瑟欠艾兹拉斯三个签名，期限还剩两年。"
+        },
+        {
+          "id": "r4",
+          "from": "c-sera",
+          "to": "c-isel",
+          "type": "隐瞒",
+          "description": "塞拉怀疑伊瑟与邪魔有关，却没有按教规上报。"
+        },
+        {
+          "id": "r5",
+          "from": "c-marco",
+          "to": "c-sera",
+          "type": "亏欠",
+          "description": "塞拉曾在病房救过马尔科的命，他一直没有还这份人情。"
+        }
+      ],
+      "plots": [
+        {
+          "id": "p1",
+          "title": "第三个签名",
+          "cause": "艾兹拉斯提醒伊瑟期限过半；同一周，马尔科以契约的秘密要挟她偷取礼拜堂的账册。",
+          "conflict": "账册由塞拉保管。伊瑟若照做，将背叛唯一可能帮助她的朋友；若拒绝，马尔科可能把契约告诉教会。",
+          "consequence": "未定。可能的走向：伊瑟向塞拉坦白；马尔科在人情与利益间改变立场；艾兹拉斯提出用马尔科的签名抵债。",
+          "characterIds": [
+            "c-isel",
+            "c-marco",
+            "c-sera",
+            "c-ezrath"
+          ],
+          "locationIds": [
+            "l-chapel",
+            "l-warehouse"
+          ],
+          "entrySlugs": [
+            "pact",
+            "warlock",
+            "zhentarim",
+            "cleric"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "id": "l-harbor",
+          "name": "灰港",
+          "description": "终年多雾的港口小城，有一座石砌灯塔。",
+          "entrySlugs": []
+        },
+        {
+          "id": "l-warehouse",
+          "name": "灯塔下的仓库",
+          "description": "黑铁行会在灰港的据点，马尔科在此办事。",
+          "entrySlugs": [
+            "zhentarim"
+          ]
+        },
+        {
+          "id": "l-chapel",
+          "name": "潮汐女神礼拜堂",
+          "description": "兼作临时病房，地窖里保存着教区账册。",
+          "entrySlugs": [
+            "cleric",
+            "acolyte"
+          ]
+        }
+      ],
+      "adaptations": [
+        {
+          "slug": "warlock",
+          "adopted": "采用邪魔恩主的设定：恩主来自下层位面，其目的是邪恶的。",
+          "changed": "恩主不是大魔鬼，而是一名低阶契约书记官；“取得三个签名”的条款为本项目原创。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        },
+        {
+          "slug": "devils",
+          "adopted": "采用魔鬼守序邪恶的阵营。",
+          "changed": "“魔鬼必须遵守契约字面条款”在本项目中作为确定规则使用；官方资料中的相关形象尚待核实。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        },
+        {
+          "slug": "zhentarim",
+          "adopted": "采用“以财富为权力、提供佣兵、奖励个人野心”的组织特征。",
+          "changed": "不使用被遗忘的国度；改名为原创组织“黑铁行会”，规模限于一座港口城市。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        },
+        {
+          "slug": "true-name",
+          "adopted": "不采用真名作为规则。",
+          "changed": "契约上的签名必须是本人真实姓名，借鉴了 SRD 异界之门“化名无效”的思路；签名带来的约束为原创。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        }
+      ]
+    },
+    {
+      "id": "proj-mine",
+      "name": "雾港旧稿",
+      "summary": "一个旧项目。",
+      "example": false,
+      "image": "art/project-greyharbor.webp",
+      "createdAt": "2026-11-18T00:00:00.000Z",
+      "updatedAt": "2026-11-18T00:00:00.000Z",
+      "characters": [
+        {
+          "id": "c-isel",
+          "name": "伊瑟·洛温（Isel Rowan）",
+          "appearance": "二十七八岁，深色卷发，常穿旧旅行外套；右手食指有一道细小的灼痕，签约时留下。",
+          "identity": "灰港的抄写员，私下是与魔鬼立约的邪术师。",
+          "history": "三年前弟弟托文染上港口热病，神庙的治疗无效。伊瑟在一份来历不明的契约上签名，弟弟当夜退烧。",
+          "motivation": "保住弟弟的性命，同时不让任何人知道代价。",
+          "desire": "找到解除契约的办法。",
+          "secret": "契约规定她须在五年内为契约方取得另外三人的自愿签名，否则契约方可以索取她的灵魂。",
+          "abilities": "契约魔法；擅长辨认笔迹与伪造文书。",
+          "limits": "契约条款的解释权在契约方手中；她不能主动向他人说出契约内容（本项目原创设定）。",
+          "notes": "",
+          "entrySlugs": [
+            "warlock",
+            "pact",
+            "devils"
+          ],
+          "image": "art/theme-pact.webp"
+        },
+        {
+          "id": "c-marco",
+          "name": "马尔科·韦斯（Marco Vess）",
+          "appearance": "五十岁上下，灰发短须，眼皮沉重，衣领上别着一枚小小的黑铁徽针。",
+          "identity": "港口情报掮客，原创组织“黑铁行会”在灰港的负责人。",
+          "history": "年轻时做过商队护卫，后来发现消息比刀剑值钱。",
+          "motivation": "扩大行会在港口的影响力。",
+          "desire": "拿到神庙账册中记录的走私名单。",
+          "secret": "他知道伊瑟的契约，因为三年前那份契约正是经他的手转交的。",
+          "abilities": "庞大的线人网络；熟悉港口每一条暗巷。",
+          "limits": "行会只认结果；他若失手，会被其他野心家取代。",
+          "notes": "",
+          "entrySlugs": [
+            "zhentarim",
+            "rogue"
+          ],
+          "image": "art/project-broker.webp"
+        },
+        {
+          "id": "c-sera",
+          "name": "塞拉修女（Sister Sera）",
+          "appearance": "灰色法衣，胸前挂着潮汐女神的贝壳圣徽，双手常因熬药而泛黄。",
+          "identity": "潮汐女神礼拜堂的牧师，主持港口的临时病房。",
+          "history": "与伊瑟一起长大。三年前曾亲手照顾托文，至今不明白他为何痊愈。",
+          "motivation": "照顾病人，维护礼拜堂。",
+          "desire": "知道真相，同时不必在信仰与友情之间选择。",
+          "secret": "她已经怀疑伊瑟与邪魔有关，但没有上报教会。",
+          "abilities": "治疗与神术；在港口居民中享有信任。",
+          "limits": "教规要求她上报与邪魔立约的人（本项目原创设定）。",
+          "notes": "",
+          "entrySlugs": [
+            "cleric",
+            "acolyte"
+          ],
+          "image": "art/theme-faith.webp"
+        },
+        {
+          "id": "c-ezrath",
+          "name": "书记官艾兹拉斯（Ezrath）",
+          "appearance": "以高瘦文员的形象出现，长角收在礼帽下，手指过长。",
+          "identity": "下层位面的契约书记官，伊瑟的契约方（原创角色）。",
+          "history": "",
+          "motivation": "收集签名，提升自己在上级眼中的地位。",
+          "desire": "",
+          "secret": "",
+          "abilities": "",
+          "limits": "必须遵守契约的字面条款（本项目原创设定）。",
+          "notes": "原创角色，借用了 SRD 中魔鬼“守序邪恶”的阵营；“书记官”这一身份不是官方设定。",
+          "entrySlugs": [
+            "devils",
+            "nine-hells"
+          ],
+          "image": "art/entry-devil.webp"
+        },
+        {
+          "id": "c-torvin",
+          "name": "托文·洛温（Torvin Rowan）",
+          "appearance": "十九岁，瘦高，码头搬运工。",
+          "identity": "伊瑟的弟弟。",
+          "history": "三年前热病痊愈，不知道原因。",
+          "motivation": "想出海当水手。",
+          "desire": "",
+          "secret": "",
+          "abilities": "",
+          "limits": "",
+          "notes": "",
+          "entrySlugs": []
+        }
+      ],
+      "relationships": [
+        {
+          "id": "r1",
+          "from": "c-marco",
+          "to": "c-isel",
+          "type": "掌握秘密",
+          "description": "马尔科知道伊瑟与魔鬼立约，并以此要求她潜入礼拜堂偷取账册。"
+        },
+        {
+          "id": "r2",
+          "from": "c-isel",
+          "to": "c-torvin",
+          "type": "保护",
+          "description": "伊瑟为救托文签下契约，至今对他隐瞒一切。"
+        },
+        {
+          "id": "r3",
+          "from": "c-isel",
+          "to": "c-ezrath",
+          "type": "亏欠",
+          "description": "伊瑟欠艾兹拉斯三个签名，期限还剩两年。"
+        },
+        {
+          "id": "r4",
+          "from": "c-sera",
+          "to": "c-isel",
+          "type": "隐瞒",
+          "description": "塞拉怀疑伊瑟与邪魔有关，却没有按教规上报。"
+        },
+        {
+          "id": "r5",
+          "from": "c-marco",
+          "to": "c-sera",
+          "type": "亏欠",
+          "description": "塞拉曾在病房救过马尔科的命，他一直没有还这份人情。"
+        }
+      ],
+      "plots": [
+        {
+          "id": "p1",
+          "title": "第三个签名",
+          "cause": "艾兹拉斯提醒伊瑟期限过半；同一周，马尔科以契约的秘密要挟她偷取礼拜堂的账册。",
+          "conflict": "账册由塞拉保管。伊瑟若照做，将背叛唯一可能帮助她的朋友；若拒绝，马尔科可能把契约告诉教会。",
+          "consequence": "未定。可能的走向：伊瑟向塞拉坦白；马尔科在人情与利益间改变立场；艾兹拉斯提出用马尔科的签名抵债。",
+          "characterIds": [
+            "c-isel",
+            "c-marco",
+            "c-sera",
+            "c-ezrath"
+          ],
+          "locationIds": [
+            "l-chapel",
+            "l-warehouse"
+          ],
+          "entrySlugs": [
+            "pact",
+            "warlock",
+            "zhentarim",
+            "cleric"
+          ]
+        }
+      ],
+      "locations": [
+        {
+          "id": "l-harbor",
+          "name": "灰港",
+          "description": "终年多雾的港口小城，有一座石砌灯塔。",
+          "entrySlugs": []
+        },
+        {
+          "id": "l-warehouse",
+          "name": "灯塔下的仓库",
+          "description": "黑铁行会在灰港的据点，马尔科在此办事。",
+          "entrySlugs": [
+            "zhentarim"
+          ]
+        },
+        {
+          "id": "l-chapel",
+          "name": "潮汐女神礼拜堂",
+          "description": "兼作临时病房，地窖里保存着教区账册。",
+          "entrySlugs": [
+            "cleric",
+            "acolyte"
+          ]
+        }
+      ],
+      "adaptations": [
+        {
+          "slug": "warlock",
+          "adopted": "采用邪魔恩主的设定：恩主来自下层位面，其目的是邪恶的。",
+          "changed": "恩主不是大魔鬼，而是一名低阶契约书记官；“取得三个签名”的条款为本项目原创。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        },
+        {
+          "slug": "devils",
+          "adopted": "采用魔鬼守序邪恶的阵营。",
+          "changed": "“魔鬼必须遵守契约字面条款”在本项目中作为确定规则使用；官方资料中的相关形象尚待核实。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        },
+        {
+          "slug": "zhentarim",
+          "adopted": "采用“以财富为权力、提供佣兵、奖励个人野心”的组织特征。",
+          "changed": "不使用被遗忘的国度；改名为原创组织“黑铁行会”，规模限于一座港口城市。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        },
+        {
+          "slug": "true-name",
+          "adopted": "不采用真名作为规则。",
+          "changed": "契约上的签名必须是本人真实姓名，借鉴了 SRD 异界之门“化名无效”的思路；签名带来的约束为原创。",
+          "addedAt": "2026-11-18T00:00:00.000Z"
+        }
+      ]
+    }
+  ],
+  "favorites": [
+    "lich"
+  ]
+}
